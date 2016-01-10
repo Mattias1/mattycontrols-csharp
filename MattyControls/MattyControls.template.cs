@@ -5,12 +5,12 @@ using System.Collections.Generic;
 
 namespace MattyControls
 {
-    class MattyControls : Control
+    public class MattyControls : Control
     {
         public static int Distance = 10;
         public static int LabelWidth = 100;
-        public static enum Horizontal { Left, CopyLeft, Center, CopyRight /* Pun intended */, Right };
-        public static enum Vertical { Top, CopyTop, Middle, CopyBottom, Bottom };
+        public enum Horizontal { Left, CopyLeft, Center, CopyRight /* Pun intended */, Right };
+        public enum Vertical { Top, CopyTop, Middle, CopyBottom, Bottom };
 
         // The static methods that actually do the work
         public static void LocateInside(Control ctrl, Control parentCtrl, MattyControls.Horizontal h, MattyControls.Vertical v, int d) {
@@ -92,7 +92,7 @@ namespace MattyControls
             return label;
         }
 
-        // -- begin types -- MattyControl : Windows Forms Control \n constructor
+        // -- begin types --
         // -- Btn : Button
         public Btn(string text, Control parent) {
             this.Text = text;
@@ -169,4 +169,5 @@ namespace MattyControls
         }
         // -- end control copy --
     }
+    // -- write controls --
 }
