@@ -29,12 +29,11 @@ class Control:
             fto.write(s + '\n')
 
         w()
-        w('public class {} : {}'.format(self.typename, self.basetype))
-        w('{')
+        w('    public class {} : {}'.format(self.typename, self.basetype))
+        w('    {')
         w(controlcopy)
-        w()
         w(self.constructor)
-        w('}')
+        w('    }')
 
 
 

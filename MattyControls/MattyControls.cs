@@ -8,7 +8,7 @@ using System.Collections.Generic;
 
 namespace MattyControls
 {
-    public class MattyControls : Control
+    public class MattyControl : Control
     {
         public static int Distance = 10;
         public static int LabelWidth = 100;
@@ -16,7 +16,9 @@ namespace MattyControls
         public enum Vertical { Top, CopyTop, Middle, CopyBottom, Bottom };
 
         // The static methods that actually do the work
-        public static void LocateInside(Control ctrl, Control parentCtrl, MattyControls.Horizontal h, MattyControls.Vertical v, int d) {
+        public static void LocateInside(Control ctrl, Control parentCtrl, MattyControl.Horizontal h, MattyControl.Vertical v, int d) {
+            if (d == -1)
+                d = MattyControl.Distance;
             int x = 0;
             int y = 0;
 
@@ -45,7 +47,9 @@ namespace MattyControls
             ctrl.Location = new Point(x, y);
         }
 
-        public static void LocateFrom(Control ctrl, Control c, MattyControls.Horizontal h, MattyControls.Vertical v, int d) {
+        public static void LocateFrom(Control ctrl, Control c, MattyControl.Horizontal h, MattyControl.Vertical v, int d) {
+            if (d == -1)
+                d = MattyControl.Distance;
             int x = 0;
             int y = 0;
 
@@ -98,8 +102,8 @@ namespace MattyControls
 
     }
 
-public class Btn : Button
-{
+    public class Btn : Button
+    {
         /// <summary>
         /// The label for this control
         /// </summary>
@@ -111,9 +115,9 @@ public class Btn : Button
         /// <param name="c">It's parent</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
-        /// <param name="d">The margin (distance), use MattyControls.Distance if -1</param>
-        public void LocateInside(Control c, MattyControls.Horizontal h = MattyControls.Horizontal.Left, MattyControls.Vertical v = MattyControls.Vertical.Top, int d = -1) {
-            MattyControls.LocateInside(this, c, h, v, d);
+        /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
+        public void LocateInside(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
+            MattyControl.LocateInside(this, c, h, v, d);
         }
 
         /// <summary>
@@ -123,8 +127,8 @@ public class Btn : Button
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
         /// <param name="distance">The margin</param>
-        public void LocateFrom(Control c, MattyControls.Horizontal h = MattyControls.Horizontal.CopyLeft, MattyControls.Vertical v = MattyControls.Vertical.CopyTop, int d = -1) {
-            MattyControls.LocateFrom(this, c, h, v, d);
+        public void LocateFrom(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
+            MattyControl.LocateFrom(this, c, h, v, d);
         }
 
         /// <summary>
@@ -137,19 +141,18 @@ public class Btn : Button
         public void AddLabel(string text, int d = -1, bool moveCtrl = true, int labelWidth = 0) {
             if (this.Label != null)
                 this.Parent.Controls.Remove(this.Label);
-            this.Label = MattyControls.AddLabel(this, text, d, moveCtrl, labelWidth);
+            this.Label = MattyControl.AddLabel(this, text, d, moveCtrl, labelWidth);
         }
-
 
         public Btn(string text, Control parent) {
             this.Text = text;
             parent.Controls.Add(this);
         }
 
-}
+    }
 
-public class Cb : CheckBox
-{
+    public class Cb : CheckBox
+    {
         /// <summary>
         /// The label for this control
         /// </summary>
@@ -161,9 +164,9 @@ public class Cb : CheckBox
         /// <param name="c">It's parent</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
-        /// <param name="d">The margin (distance), use MattyControls.Distance if -1</param>
-        public void LocateInside(Control c, MattyControls.Horizontal h = MattyControls.Horizontal.Left, MattyControls.Vertical v = MattyControls.Vertical.Top, int d = -1) {
-            MattyControls.LocateInside(this, c, h, v, d);
+        /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
+        public void LocateInside(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
+            MattyControl.LocateInside(this, c, h, v, d);
         }
 
         /// <summary>
@@ -173,8 +176,8 @@ public class Cb : CheckBox
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
         /// <param name="distance">The margin</param>
-        public void LocateFrom(Control c, MattyControls.Horizontal h = MattyControls.Horizontal.CopyLeft, MattyControls.Vertical v = MattyControls.Vertical.CopyTop, int d = -1) {
-            MattyControls.LocateFrom(this, c, h, v, d);
+        public void LocateFrom(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
+            MattyControl.LocateFrom(this, c, h, v, d);
         }
 
         /// <summary>
@@ -187,19 +190,18 @@ public class Cb : CheckBox
         public void AddLabel(string text, int d = -1, bool moveCtrl = true, int labelWidth = 0) {
             if (this.Label != null)
                 this.Parent.Controls.Remove(this.Label);
-            this.Label = MattyControls.AddLabel(this, text, d, moveCtrl, labelWidth);
+            this.Label = MattyControl.AddLabel(this, text, d, moveCtrl, labelWidth);
         }
-
 
         public Cb(string text, Control parent) {
             this.Text = text;
             parent.Controls.Add(this);
         }
 
-}
+    }
 
-public class Tb : TextBox
-{
+    public class Tb : TextBox
+    {
         /// <summary>
         /// The label for this control
         /// </summary>
@@ -211,9 +213,9 @@ public class Tb : TextBox
         /// <param name="c">It's parent</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
-        /// <param name="d">The margin (distance), use MattyControls.Distance if -1</param>
-        public void LocateInside(Control c, MattyControls.Horizontal h = MattyControls.Horizontal.Left, MattyControls.Vertical v = MattyControls.Vertical.Top, int d = -1) {
-            MattyControls.LocateInside(this, c, h, v, d);
+        /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
+        public void LocateInside(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
+            MattyControl.LocateInside(this, c, h, v, d);
         }
 
         /// <summary>
@@ -223,8 +225,8 @@ public class Tb : TextBox
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
         /// <param name="distance">The margin</param>
-        public void LocateFrom(Control c, MattyControls.Horizontal h = MattyControls.Horizontal.CopyLeft, MattyControls.Vertical v = MattyControls.Vertical.CopyTop, int d = -1) {
-            MattyControls.LocateFrom(this, c, h, v, d);
+        public void LocateFrom(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
+            MattyControl.LocateFrom(this, c, h, v, d);
         }
 
         /// <summary>
@@ -237,18 +239,17 @@ public class Tb : TextBox
         public void AddLabel(string text, int d = -1, bool moveCtrl = true, int labelWidth = 0) {
             if (this.Label != null)
                 this.Parent.Controls.Remove(this.Label);
-            this.Label = MattyControls.AddLabel(this, text, d, moveCtrl, labelWidth);
+            this.Label = MattyControl.AddLabel(this, text, d, moveCtrl, labelWidth);
         }
-
 
         public Tb(Control parent) {
             parent.Controls.Add(this);
         }
 
-}
+    }
 
-public class RichTb : RichTextBox
-{
+    public class RichTb : RichTextBox
+    {
         /// <summary>
         /// The label for this control
         /// </summary>
@@ -260,9 +261,9 @@ public class RichTb : RichTextBox
         /// <param name="c">It's parent</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
-        /// <param name="d">The margin (distance), use MattyControls.Distance if -1</param>
-        public void LocateInside(Control c, MattyControls.Horizontal h = MattyControls.Horizontal.Left, MattyControls.Vertical v = MattyControls.Vertical.Top, int d = -1) {
-            MattyControls.LocateInside(this, c, h, v, d);
+        /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
+        public void LocateInside(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
+            MattyControl.LocateInside(this, c, h, v, d);
         }
 
         /// <summary>
@@ -272,8 +273,8 @@ public class RichTb : RichTextBox
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
         /// <param name="distance">The margin</param>
-        public void LocateFrom(Control c, MattyControls.Horizontal h = MattyControls.Horizontal.CopyLeft, MattyControls.Vertical v = MattyControls.Vertical.CopyTop, int d = -1) {
-            MattyControls.LocateFrom(this, c, h, v, d);
+        public void LocateFrom(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
+            MattyControl.LocateFrom(this, c, h, v, d);
         }
 
         /// <summary>
@@ -286,18 +287,17 @@ public class RichTb : RichTextBox
         public void AddLabel(string text, int d = -1, bool moveCtrl = true, int labelWidth = 0) {
             if (this.Label != null)
                 this.Parent.Controls.Remove(this.Label);
-            this.Label = MattyControls.AddLabel(this, text, d, moveCtrl, labelWidth);
+            this.Label = MattyControl.AddLabel(this, text, d, moveCtrl, labelWidth);
         }
-
 
         public RichTb(Control parent) {
             parent.Controls.Add(this);
         }
 
-}
+    }
 
-public class Lb : ListBox
-{
+    public class Lb : ListBox
+    {
         /// <summary>
         /// The label for this control
         /// </summary>
@@ -309,9 +309,9 @@ public class Lb : ListBox
         /// <param name="c">It's parent</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
-        /// <param name="d">The margin (distance), use MattyControls.Distance if -1</param>
-        public void LocateInside(Control c, MattyControls.Horizontal h = MattyControls.Horizontal.Left, MattyControls.Vertical v = MattyControls.Vertical.Top, int d = -1) {
-            MattyControls.LocateInside(this, c, h, v, d);
+        /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
+        public void LocateInside(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
+            MattyControl.LocateInside(this, c, h, v, d);
         }
 
         /// <summary>
@@ -321,8 +321,8 @@ public class Lb : ListBox
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
         /// <param name="distance">The margin</param>
-        public void LocateFrom(Control c, MattyControls.Horizontal h = MattyControls.Horizontal.CopyLeft, MattyControls.Vertical v = MattyControls.Vertical.CopyTop, int d = -1) {
-            MattyControls.LocateFrom(this, c, h, v, d);
+        public void LocateFrom(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
+            MattyControl.LocateFrom(this, c, h, v, d);
         }
 
         /// <summary>
@@ -335,18 +335,17 @@ public class Lb : ListBox
         public void AddLabel(string text, int d = -1, bool moveCtrl = true, int labelWidth = 0) {
             if (this.Label != null)
                 this.Parent.Controls.Remove(this.Label);
-            this.Label = MattyControls.AddLabel(this, text, d, moveCtrl, labelWidth);
+            this.Label = MattyControl.AddLabel(this, text, d, moveCtrl, labelWidth);
         }
-
 
         public Lb(Control parent) {
             parent.Controls.Add(this);
         }
 
-}
+    }
 
-public class Db : ComboBox
-{
+    public class Db : ComboBox
+    {
         /// <summary>
         /// The label for this control
         /// </summary>
@@ -358,9 +357,9 @@ public class Db : ComboBox
         /// <param name="c">It's parent</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
-        /// <param name="d">The margin (distance), use MattyControls.Distance if -1</param>
-        public void LocateInside(Control c, MattyControls.Horizontal h = MattyControls.Horizontal.Left, MattyControls.Vertical v = MattyControls.Vertical.Top, int d = -1) {
-            MattyControls.LocateInside(this, c, h, v, d);
+        /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
+        public void LocateInside(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
+            MattyControl.LocateInside(this, c, h, v, d);
         }
 
         /// <summary>
@@ -370,8 +369,8 @@ public class Db : ComboBox
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
         /// <param name="distance">The margin</param>
-        public void LocateFrom(Control c, MattyControls.Horizontal h = MattyControls.Horizontal.CopyLeft, MattyControls.Vertical v = MattyControls.Vertical.CopyTop, int d = -1) {
-            MattyControls.LocateFrom(this, c, h, v, d);
+        public void LocateFrom(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
+            MattyControl.LocateFrom(this, c, h, v, d);
         }
 
         /// <summary>
@@ -384,19 +383,18 @@ public class Db : ComboBox
         public void AddLabel(string text, int d = -1, bool moveCtrl = true, int labelWidth = 0) {
             if (this.Label != null)
                 this.Parent.Controls.Remove(this.Label);
-            this.Label = MattyControls.AddLabel(this, text, d, moveCtrl, labelWidth);
+            this.Label = MattyControl.AddLabel(this, text, d, moveCtrl, labelWidth);
         }
-
 
         public Db(Control parent) {
             parent.Controls.Add(this);
             this.DropDownStyle = ComboBoxStyle.DropDownList;
         }
 
-}
+    }
 
-public class Lbl : Label
-{
+    public class Lbl : Label
+    {
         /// <summary>
         /// The label for this control
         /// </summary>
@@ -408,9 +406,9 @@ public class Lbl : Label
         /// <param name="c">It's parent</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
-        /// <param name="d">The margin (distance), use MattyControls.Distance if -1</param>
-        public void LocateInside(Control c, MattyControls.Horizontal h = MattyControls.Horizontal.Left, MattyControls.Vertical v = MattyControls.Vertical.Top, int d = -1) {
-            MattyControls.LocateInside(this, c, h, v, d);
+        /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
+        public void LocateInside(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
+            MattyControl.LocateInside(this, c, h, v, d);
         }
 
         /// <summary>
@@ -420,8 +418,8 @@ public class Lbl : Label
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
         /// <param name="distance">The margin</param>
-        public void LocateFrom(Control c, MattyControls.Horizontal h = MattyControls.Horizontal.CopyLeft, MattyControls.Vertical v = MattyControls.Vertical.CopyTop, int d = -1) {
-            MattyControls.LocateFrom(this, c, h, v, d);
+        public void LocateFrom(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
+            MattyControl.LocateFrom(this, c, h, v, d);
         }
 
         /// <summary>
@@ -434,14 +432,13 @@ public class Lbl : Label
         public void AddLabel(string text, int d = -1, bool moveCtrl = true, int labelWidth = 0) {
             if (this.Label != null)
                 this.Parent.Controls.Remove(this.Label);
-            this.Label = MattyControls.AddLabel(this, text, d, moveCtrl, labelWidth);
+            this.Label = MattyControl.AddLabel(this, text, d, moveCtrl, labelWidth);
         }
-
 
         public Lbl(string text, Control parent) {
             this.Text = text;
             parent.Controls.Add(this);
         }
 
-}
+    }
 }
