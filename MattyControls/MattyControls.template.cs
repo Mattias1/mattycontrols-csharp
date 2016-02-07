@@ -96,6 +96,34 @@ namespace MattyControls
             return label;
         }
 
+        public static void StretchRight(Control ctrl, float factor) {
+            ctrl.Size = new Size((int)(ctrl.Width * factor), ctrl.Height);
+        }
+        public static void StretchRight(Control ctrl, UserControl parent, int d) {
+            if (d == -1)
+                d = MattyControl.Distance;
+            ctrl.Size = new Size(parent.ClientSize.Width - ctrl.Location.X - d, ctrl.Height);
+        }
+        public static void StretchRight(Control ctrl, Control c, int d) {
+            if (d == -1)
+                d = MattyControl.Distance;
+            ctrl.Size = new Size(c.Location.X - ctrl.Location.X - d, ctrl.Height);
+        }
+
+        public static void StretchDown(Control ctrl, float factor) {
+            ctrl.Size = new Size(ctrl.Width, (int)(ctrl.Height * factor));
+        }
+        public static void StretchDown(Control ctrl, UserControl parent, int d) {
+            if (d == -1)
+                d = MattyControl.Distance;
+            ctrl.Size = new Size(ctrl.Width, parent.ClientSize.Height - ctrl.Location.Y - d);
+        }
+        public static void StretchDown(Control ctrl, Control c, int d) {
+            if (d == -1)
+                d = MattyControl.Distance;
+            ctrl.Size = new Size(ctrl.Width, c.Location.Y - ctrl.Location.Y - d);
+        }
+
         // -- begin types --
         // -- Btn : Button
         public Btn(string text, Control parent) {
@@ -170,6 +198,54 @@ namespace MattyControls
             if (this.Label != null)
                 this.Parent.Controls.Remove(this.Label);
             this.Label = MattyControl.AddLabel(this, text, d, moveCtrl, labelWidth);
+        }
+
+        /// <summary>
+        /// Stretch the control right
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchRight(float factor) {
+            MattyControl.StretchRight(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control right
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchRight(UserControl parent, int d = -1) {
+            MattyControl.StretchRight(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control right
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchRight(Control c, int d = -1) {
+            MattyControl.StretchRight(this, c, d);
+        }
+
+        /// <summary>
+        /// Stretch the control down
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchDown(float factor) {
+            MattyControl.StretchDown(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control down
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDown(UserControl parent, int d = -1) {
+            MattyControl.StretchDown(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control down
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDown(Control c, int d = -1) {
+            MattyControl.StretchDown(this, c, d);
         }
         // -- end control copy --
     }

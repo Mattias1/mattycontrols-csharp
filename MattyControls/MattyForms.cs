@@ -13,6 +13,8 @@ namespace MattyControls
         private SettingsSingleton settings;             // I don't want to use the static getter inside this class, because the singleton can be subclassed. So I just use this, it works, and it's private, so ok.
 
         public MattyForm(Size minimumSize, SettingsSingleton settings) {
+            this.MinimumSize = minimumSize;
+
             this.userControls = new List<MattyUserControl>();
             this.lastVisited = null;
             this.settings = settings;
@@ -20,8 +22,6 @@ namespace MattyControls
             this.StartPosition = FormStartPosition.Manual;
             this.Location = this.settings.Position;
             this.ClientSize = new Size(this.settings.Size);
-
-            this.MinimumSize = minimumSize;
 
             // Register events
             this.LocationChanged += (o, e) => { this.settings.Position = this.Location; };
