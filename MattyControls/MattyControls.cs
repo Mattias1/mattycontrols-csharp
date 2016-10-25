@@ -47,33 +47,33 @@ namespace MattyControls
             ctrl.Location = new Point(x, y);
         }
 
-        public static void LocateFrom(Control ctrl, Control c, MattyControl.Horizontal h, MattyControl.Vertical v, int d) {
+        public static void LocateFrom(Control ctrl, Control other, MattyControl.Horizontal h, MattyControl.Vertical v, int d) {
             if (d == -1)
                 d = MattyControl.Distance;
             int x = 0;
             int y = 0;
 
             if (h == Horizontal.Left)
-                x = c.Location.X - ctrl.Size.Width - d;
+                x = other.Location.X - ctrl.Size.Width - d;
             if (h == Horizontal.CopyLeft)
-                x = c.Location.X;
+                x = other.Location.X;
             if (h == Horizontal.Center)
-                x = c.Location.X + (c.Size.Width - ctrl.Size.Width) / 2;
+                x = other.Location.X + (other.Size.Width - ctrl.Size.Width) / 2;
             if (h == Horizontal.CopyRight)
-                x = c.Location.X + c.Size.Width - ctrl.Size.Width;
+                x = other.Location.X + other.Size.Width - ctrl.Size.Width;
             if (h == Horizontal.Right)
-                x = c.Location.X + c.Size.Width + d;
+                x = other.Location.X + other.Size.Width + d;
 
             if (v == Vertical.Top)
-                y = c.Location.Y - ctrl.Size.Height - d;
+                y = other.Location.Y - ctrl.Size.Height - d;
             if (v == Vertical.CopyTop)
-                y = c.Location.Y;
+                y = other.Location.Y;
             if (v == Vertical.Middle)
-                y = c.Location.Y + (c.Size.Height - ctrl.Size.Height) / 2;
+                y = other.Location.Y + (other.Size.Height - ctrl.Size.Height) / 2;
             if (v == Vertical.CopyBottom)
-                y = c.Location.Y + c.Size.Height - ctrl.Size.Height;
+                y = other.Location.Y + other.Size.Height - ctrl.Size.Height;
             if (v == Vertical.Bottom)
-                y = c.Location.Y + c.Size.Height + d;
+                y = other.Location.Y + other.Size.Height + d;
 
             ctrl.Location = new Point(x, y);
         }
@@ -99,32 +99,140 @@ namespace MattyControls
             return label;
         }
 
-        public static void StretchRight(Control ctrl, float factor) {
-            ctrl.Size = new Size((int)(ctrl.Width * factor), ctrl.Height);
-        }
-        public static void StretchRight(Control ctrl, UserControl parent, int d) {
+        // Quick positioning relative to other controls
+        public static void PositionRightOf(Control ctrl, Control other, int d) {
             if (d == -1)
                 d = MattyControl.Distance;
-            ctrl.Size = new Size(parent.ClientSize.Width - ctrl.Location.X - d, ctrl.Height);
+            LocateFrom(ctrl, other, MattyControl.Horizontal.Right, MattyControl.Vertical.CopyTop, d);
         }
-        public static void StretchRight(Control ctrl, Control c, int d) {
+        public static void PositionLeftOf(Control ctrl, Control other, int d) {
             if (d == -1)
                 d = MattyControl.Distance;
-            ctrl.Size = new Size(c.Location.X - ctrl.Location.X - d, ctrl.Height);
+            LocateFrom(ctrl, other, MattyControl.Horizontal.Left, MattyControl.Vertical.CopyTop, d);
+        }
+        public static void PositionBelow(Control ctrl, Control other, int d) {
+            if (d == -1)
+                d = MattyControl.Distance;
+            LocateFrom(ctrl, other, MattyControl.Horizontal.CopyLeft, MattyControl.Vertical.Bottom, d);
+        }
+        public static void PositionAbove(Control ctrl, Control other, int d) {
+            if (d == -1)
+                d = MattyControl.Distance;
+            LocateFrom(ctrl, other, MattyControl.Horizontal.CopyLeft, MattyControl.Vertical.Top, d);
         }
 
-        public static void StretchDown(Control ctrl, float factor) {
-            ctrl.Size = new Size(ctrl.Width, (int)(ctrl.Height * factor));
-        }
-        public static void StretchDown(Control ctrl, UserControl parent, int d) {
+        // Quick positioning inside the parent
+        public static void PositionTopLeftInside(Control ctrl, Control parent, int d) {
             if (d == -1)
                 d = MattyControl.Distance;
-            ctrl.Size = new Size(ctrl.Width, parent.ClientSize.Height - ctrl.Location.Y - d);
+            LocateInside(ctrl, parent, MattyControl.Horizontal.Left, MattyControl.Vertical.Top, d);
         }
-        public static void StretchDown(Control ctrl, Control c, int d) {
+        public static void PositionTopRightInside(Control ctrl, Control parent, int d) {
             if (d == -1)
                 d = MattyControl.Distance;
-            ctrl.Size = new Size(ctrl.Width, c.Location.Y - ctrl.Location.Y - d);
+            LocateInside(ctrl, parent, MattyControl.Horizontal.Right, MattyControl.Vertical.Top, d);
+        }
+        public static void PositionBottomLeftInside(Control ctrl, Control parent, int d) {
+            if (d == -1)
+                d = MattyControl.Distance;
+            LocateInside(ctrl, parent, MattyControl.Horizontal.Left, MattyControl.Vertical.Bottom, d);
+        }
+        public static void PositionBottomRightInside(Control ctrl, Control parent, int d) {
+            if (d == -1)
+                d = MattyControl.Distance;
+            LocateInside(ctrl, parent, MattyControl.Horizontal.Right, MattyControl.Vertical.Bottom, d);
+        }
+
+        // Stretch right
+        public static void StretchRightFactor(Control ctrl, float factor) {
+            ctrl.Size = new Size((int)(ctrl.Size.Width * factor), ctrl.Size.Height);
+        }
+        public static void StretchRightFixed(Control ctrl, int amount) {
+            ctrl.Size = new Size(ctrl.Size.Width + amount, ctrl.Height);
+        }
+        public static void StretchRightInside(Control ctrl, Control parent, int d) {
+            if (d == -1)
+                d = MattyControl.Distance;
+            ctrl.Size = new Size(parent.ClientSize.Width - ctrl.Location.X - d, ctrl.Size.Height);
+        }
+        public static void StretchRightTo(Control ctrl, Control other, int d) {
+            if (d == -1)
+                d = MattyControl.Distance;
+            ctrl.Size = new Size(other.Location.X - ctrl.Location.X - d, ctrl.Size.Height);
+        }
+
+        // Stretch down
+        public static void StretchDownFactor(Control ctrl, float factor) {
+            ctrl.Size = new Size(ctrl.Size.Width, (int)(ctrl.Size.Height * factor));
+        }
+        public static void StretchDownFixed(Control ctrl, int amount) {
+            ctrl.Size = new Size(ctrl.Size.Width, ctrl.Size.Height + amount);
+        }
+        public static void StretchDownInside(Control ctrl, Control parent, int d) {
+            if (d == -1)
+                d = MattyControl.Distance;
+            ctrl.Size = new Size(ctrl.Size.Width, parent.ClientSize.Height - ctrl.Location.Y - d);
+        }
+        public static void StretchDownTo(Control ctrl, Control other, int d) {
+            if (d == -1)
+                d = MattyControl.Distance;
+            ctrl.Size = new Size(ctrl.Size.Width, other.Location.Y - ctrl.Location.Y - d);
+        }
+
+        // Stretch left
+        public static void StretchLeftFactor(Control ctrl, float factor) {
+            int oldWidth = ctrl.Size.Width;
+            StretchRightFactor(ctrl, factor);
+            MoveLeft(ctrl, ctrl.Size.Width - oldWidth);
+        }
+        public static void StretchLeftFixed(Control ctrl, int amount) {
+            StretchRightFixed(ctrl, amount);
+            MoveLeft(ctrl, amount);
+        }
+        public static void StretchLeftInside(Control ctrl, Control parent, int d) {
+            int oldWidth = ctrl.Size.Width;
+            StretchRightInside(ctrl, parent, d);
+            MoveLeft(ctrl, ctrl.Size.Width - oldWidth);
+        }
+        public static void StretchLeftTo(Control ctrl, Control other, int d) {
+            int oldWidth = ctrl.Size.Width;
+            StretchRightTo(ctrl, other, d);
+            MoveLeft(ctrl, ctrl.Size.Width - oldWidth);
+        }
+
+        // Stretch up
+        public static void StretchUpFactor(Control ctrl, float factor) {
+            int oldHeight = ctrl.Size.Height;
+            StretchDownFactor(ctrl, factor);
+            MoveUp(ctrl, ctrl.Size.Height - oldHeight);
+        }
+        public static void StretchUpFixed(Control ctrl, int amount) {
+            StretchDownFixed(ctrl, amount);
+            MoveUp(ctrl, amount);
+        }
+        public static void StretchUpInside(Control ctrl, Control parent, int d) {
+            int oldHeight = ctrl.Size.Height;
+            StretchDownInside(ctrl, parent, d);
+            MoveUp(ctrl, ctrl.Size.Height - oldHeight);
+        }
+        public static void StretchUpTo(Control ctrl, Control other, int d) {
+            int oldHeight = ctrl.Size.Height;
+            StretchDownTo(ctrl, other, d);
+            MoveUp(ctrl, ctrl.Size.Height - oldHeight);
+        }
+
+        // Move
+        public static void MoveRight(Control ctrl, int amount) {
+            ctrl.Location = new Point(ctrl.Location.X + amount, ctrl.Location.Y);
+        }
+        public static void MoveLeft(Control ctrl, int amount) {
+            MoveRight(ctrl, -amount);
+        }
+        public static void MoveDown(Control ctrl, int amount) {
+            ctrl.Location = new Point(ctrl.Location.X, ctrl.Location.Y + amount);
+        }
+        public static void MoveUp(Control ctrl, int amount) {
+            MoveDown(ctrl, -amount);
         }
 
 
@@ -132,6 +240,11 @@ namespace MattyControls
 
     public class Btn : Button
     {
+        public Btn(string text, Control parent) {
+            this.Text = text;
+            parent.Controls.Add(this);
+        }
+
         /// <summary>
         /// The label for this control
         /// </summary>
@@ -140,12 +253,12 @@ namespace MattyControls
         /// <summary>
         /// Locate this control inside its parent in a specific way
         /// </summary>
-        /// <param name="c">It's parent</param>
+        /// <param name="parent">It's parent</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
         /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
-        public void LocateInside(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
-            MattyControl.LocateInside(this, c, h, v, d);
+        public void LocateInside(Control parent, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
+            MattyControl.LocateInside(this, parent, h, v, d);
         }
 
         /// <summary>
@@ -154,9 +267,9 @@ namespace MattyControls
         /// <param name="c">The other control</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
-        /// <param name="distance">The margin</param>
-        public void LocateFrom(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
-            MattyControl.LocateFrom(this, c, h, v, d);
+        /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
+        public void LocateFrom(Control other, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
+            MattyControl.LocateFrom(this, other, h, v, d);
         }
 
         /// <summary>
@@ -173,62 +286,234 @@ namespace MattyControls
         }
 
         /// <summary>
-        /// Stretch the control right
-        /// </summary>
-        /// <param name="factor">The factor to stretch</param>
-        public void StretchRight(float factor) {
-            MattyControl.StretchRight(this, factor);
-        }
-        /// <summary>
-        /// Stretch the control right
+        /// Position the control to the right of the other control
         /// </summary>
         /// <param name="parent">The parent user control</param>
-        /// <param name="d">The distance between the label and the control</param>
-        public void StretchRight(UserControl parent, int d = -1) {
-            MattyControl.StretchRight(this, parent, d);
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionRightOf(Control other, int d = -1) {
+            MattyControl.PositionRightOf(this, other, d);
         }
         /// <summary>
-        /// Stretch the control right
+        /// Position the control to the left of the other control
         /// </summary>
-        /// <param name="c">The other control</param>
-        /// <param name="d">The distance between the label and the control</param>
-        public void StretchRight(Control c, int d = -1) {
-            MattyControl.StretchRight(this, c, d);
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionLeftOf(Control other, int d = -1) {
+            MattyControl.PositionLeftOf(this, other, d);
+        }
+        /// <summary>
+        /// Position the control to the above the other control
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionAbove(Control other, int d = -1) {
+            MattyControl.PositionAbove(this, other, d);
+        }
+        /// <summary>
+        /// Position the control to the below the other control
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBelow(Control other, int d = -1) {
+            MattyControl.PositionBelow(this, other, d);
         }
 
         /// <summary>
-        /// Stretch the control down
+        /// Position the control in the top right
         /// </summary>
-        /// <param name="factor">The factor to stretch</param>
-        public void StretchDown(float factor) {
-            MattyControl.StretchDown(this, factor);
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionTopRightInside(Control parent, int d = -1) {
+            MattyControl.PositionTopRightInside(this, parent, d);
         }
         /// <summary>
-        /// Stretch the control down
+        /// Position the control in the top left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionTopLeftInside(Control parent, int d = -1) {
+            MattyControl.PositionTopLeftInside(this, parent, d);
+        }
+        /// <summary>
+        /// Position the control in the bottom right
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBottomRightInside(Control parent, int d = -1) {
+            MattyControl.PositionBottomRightInside(this, parent, d);
+        }
+        /// <summary>
+        /// Position the control in the bottom left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBottomLeftInside(Control parent, int d = -1) {
+            MattyControl.PositionBottomLeftInside(this, parent, d);
+        }
+
+        /// <summary>
+        /// Stretch the control to the right
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchRightFactor(float factor) {
+            MattyControl.StretchRightFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control to the right
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchRightFixed(int amount) {
+            MattyControl.StretchRightFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control to the right
         /// </summary>
         /// <param name="parent">The parent user control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void StretchDown(UserControl parent, int d = -1) {
-            MattyControl.StretchDown(this, parent, d);
+        public void StretchRightInside(Control parent, int d = -1) {
+            MattyControl.StretchRightInside(this, parent, d);
         }
         /// <summary>
-        /// Stretch the control down
+        /// Stretch the control to the right
         /// </summary>
         /// <param name="c">The other control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void StretchDown(Control c, int d = -1) {
-            MattyControl.StretchDown(this, c, d);
+        public void StretchRightTo(Control other, int d = -1) {
+            MattyControl.StretchRightTo(this, other, d);
         }
 
-        public Btn(string text, Control parent) {
-            this.Text = text;
-            parent.Controls.Add(this);
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchDownFactor(float factor) {
+            MattyControl.StretchDownFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchDownFixed(int amount) {
+            MattyControl.StretchDownFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDownInside(Control parent, int d = -1) {
+            MattyControl.StretchDownInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDownTo(Control other, int d = -1) {
+            MattyControl.StretchDownTo(this, other, d);
+        }
+
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchLeftFactor(float factor) {
+            MattyControl.StretchLeftFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchLeftFixed(int amount) {
+            MattyControl.StretchLeftFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchLeftInside(Control parent, int d = -1) {
+            MattyControl.StretchLeftInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchLeftTo(Control other, int d = -1) {
+            MattyControl.StretchLeftTo(this, other, d);
+        }
+
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchUpFactor(float factor) {
+            MattyControl.StretchUpFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchUpFixed(int amount) {
+            MattyControl.StretchUpFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchUpInside(Control parent, int d = -1) {
+            MattyControl.StretchUpInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchUpTo(Control other, int d = -1) {
+            MattyControl.StretchUpTo(this, other, d);
+        }
+
+
+        /// <summary>
+        /// Move the control to the right
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveRight(int amount) {
+            MattyControl.MoveRight(this, amount);
+        }
+        /// <summary>
+        /// Move the control downwards
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveDown(int amount) {
+            MattyControl.MoveDown(this, amount);
+        }
+        /// <summary>
+        /// Move the control to the left
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveLeft(int amount) {
+            MattyControl.MoveLeft(this, amount);
+        }
+        /// <summary>
+        /// Move the control upwards
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveUp(int amount) {
+            MattyControl.MoveUp(this, amount);
         }
 
     }
 
     public class Cb : CheckBox
     {
+        public Cb(string text, Control parent) {
+            this.Text = text;
+            parent.Controls.Add(this);
+        }
+
         /// <summary>
         /// The label for this control
         /// </summary>
@@ -237,12 +522,12 @@ namespace MattyControls
         /// <summary>
         /// Locate this control inside its parent in a specific way
         /// </summary>
-        /// <param name="c">It's parent</param>
+        /// <param name="parent">It's parent</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
         /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
-        public void LocateInside(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
-            MattyControl.LocateInside(this, c, h, v, d);
+        public void LocateInside(Control parent, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
+            MattyControl.LocateInside(this, parent, h, v, d);
         }
 
         /// <summary>
@@ -251,9 +536,9 @@ namespace MattyControls
         /// <param name="c">The other control</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
-        /// <param name="distance">The margin</param>
-        public void LocateFrom(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
-            MattyControl.LocateFrom(this, c, h, v, d);
+        /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
+        public void LocateFrom(Control other, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
+            MattyControl.LocateFrom(this, other, h, v, d);
         }
 
         /// <summary>
@@ -270,62 +555,233 @@ namespace MattyControls
         }
 
         /// <summary>
-        /// Stretch the control right
-        /// </summary>
-        /// <param name="factor">The factor to stretch</param>
-        public void StretchRight(float factor) {
-            MattyControl.StretchRight(this, factor);
-        }
-        /// <summary>
-        /// Stretch the control right
+        /// Position the control to the right of the other control
         /// </summary>
         /// <param name="parent">The parent user control</param>
-        /// <param name="d">The distance between the label and the control</param>
-        public void StretchRight(UserControl parent, int d = -1) {
-            MattyControl.StretchRight(this, parent, d);
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionRightOf(Control other, int d = -1) {
+            MattyControl.PositionRightOf(this, other, d);
         }
         /// <summary>
-        /// Stretch the control right
+        /// Position the control to the left of the other control
         /// </summary>
-        /// <param name="c">The other control</param>
-        /// <param name="d">The distance between the label and the control</param>
-        public void StretchRight(Control c, int d = -1) {
-            MattyControl.StretchRight(this, c, d);
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionLeftOf(Control other, int d = -1) {
+            MattyControl.PositionLeftOf(this, other, d);
+        }
+        /// <summary>
+        /// Position the control to the above the other control
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionAbove(Control other, int d = -1) {
+            MattyControl.PositionAbove(this, other, d);
+        }
+        /// <summary>
+        /// Position the control to the below the other control
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBelow(Control other, int d = -1) {
+            MattyControl.PositionBelow(this, other, d);
         }
 
         /// <summary>
-        /// Stretch the control down
+        /// Position the control in the top right
         /// </summary>
-        /// <param name="factor">The factor to stretch</param>
-        public void StretchDown(float factor) {
-            MattyControl.StretchDown(this, factor);
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionTopRightInside(Control parent, int d = -1) {
+            MattyControl.PositionTopRightInside(this, parent, d);
         }
         /// <summary>
-        /// Stretch the control down
+        /// Position the control in the top left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionTopLeftInside(Control parent, int d = -1) {
+            MattyControl.PositionTopLeftInside(this, parent, d);
+        }
+        /// <summary>
+        /// Position the control in the bottom right
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBottomRightInside(Control parent, int d = -1) {
+            MattyControl.PositionBottomRightInside(this, parent, d);
+        }
+        /// <summary>
+        /// Position the control in the bottom left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBottomLeftInside(Control parent, int d = -1) {
+            MattyControl.PositionBottomLeftInside(this, parent, d);
+        }
+
+        /// <summary>
+        /// Stretch the control to the right
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchRightFactor(float factor) {
+            MattyControl.StretchRightFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control to the right
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchRightFixed(int amount) {
+            MattyControl.StretchRightFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control to the right
         /// </summary>
         /// <param name="parent">The parent user control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void StretchDown(UserControl parent, int d = -1) {
-            MattyControl.StretchDown(this, parent, d);
+        public void StretchRightInside(Control parent, int d = -1) {
+            MattyControl.StretchRightInside(this, parent, d);
         }
         /// <summary>
-        /// Stretch the control down
+        /// Stretch the control to the right
         /// </summary>
         /// <param name="c">The other control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void StretchDown(Control c, int d = -1) {
-            MattyControl.StretchDown(this, c, d);
+        public void StretchRightTo(Control other, int d = -1) {
+            MattyControl.StretchRightTo(this, other, d);
         }
 
-        public Cb(string text, Control parent) {
-            this.Text = text;
-            parent.Controls.Add(this);
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchDownFactor(float factor) {
+            MattyControl.StretchDownFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchDownFixed(int amount) {
+            MattyControl.StretchDownFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDownInside(Control parent, int d = -1) {
+            MattyControl.StretchDownInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDownTo(Control other, int d = -1) {
+            MattyControl.StretchDownTo(this, other, d);
+        }
+
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchLeftFactor(float factor) {
+            MattyControl.StretchLeftFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchLeftFixed(int amount) {
+            MattyControl.StretchLeftFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchLeftInside(Control parent, int d = -1) {
+            MattyControl.StretchLeftInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchLeftTo(Control other, int d = -1) {
+            MattyControl.StretchLeftTo(this, other, d);
+        }
+
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchUpFactor(float factor) {
+            MattyControl.StretchUpFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchUpFixed(int amount) {
+            MattyControl.StretchUpFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchUpInside(Control parent, int d = -1) {
+            MattyControl.StretchUpInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchUpTo(Control other, int d = -1) {
+            MattyControl.StretchUpTo(this, other, d);
+        }
+
+
+        /// <summary>
+        /// Move the control to the right
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveRight(int amount) {
+            MattyControl.MoveRight(this, amount);
+        }
+        /// <summary>
+        /// Move the control downwards
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveDown(int amount) {
+            MattyControl.MoveDown(this, amount);
+        }
+        /// <summary>
+        /// Move the control to the left
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveLeft(int amount) {
+            MattyControl.MoveLeft(this, amount);
+        }
+        /// <summary>
+        /// Move the control upwards
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveUp(int amount) {
+            MattyControl.MoveUp(this, amount);
         }
 
     }
 
     public class Tb : TextBox
     {
+        public Tb(Control parent) {
+            parent.Controls.Add(this);
+        }
+
         /// <summary>
         /// The label for this control
         /// </summary>
@@ -334,12 +790,12 @@ namespace MattyControls
         /// <summary>
         /// Locate this control inside its parent in a specific way
         /// </summary>
-        /// <param name="c">It's parent</param>
+        /// <param name="parent">It's parent</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
         /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
-        public void LocateInside(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
-            MattyControl.LocateInside(this, c, h, v, d);
+        public void LocateInside(Control parent, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
+            MattyControl.LocateInside(this, parent, h, v, d);
         }
 
         /// <summary>
@@ -348,9 +804,9 @@ namespace MattyControls
         /// <param name="c">The other control</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
-        /// <param name="distance">The margin</param>
-        public void LocateFrom(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
-            MattyControl.LocateFrom(this, c, h, v, d);
+        /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
+        public void LocateFrom(Control other, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
+            MattyControl.LocateFrom(this, other, h, v, d);
         }
 
         /// <summary>
@@ -367,61 +823,233 @@ namespace MattyControls
         }
 
         /// <summary>
-        /// Stretch the control right
-        /// </summary>
-        /// <param name="factor">The factor to stretch</param>
-        public void StretchRight(float factor) {
-            MattyControl.StretchRight(this, factor);
-        }
-        /// <summary>
-        /// Stretch the control right
+        /// Position the control to the right of the other control
         /// </summary>
         /// <param name="parent">The parent user control</param>
-        /// <param name="d">The distance between the label and the control</param>
-        public void StretchRight(UserControl parent, int d = -1) {
-            MattyControl.StretchRight(this, parent, d);
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionRightOf(Control other, int d = -1) {
+            MattyControl.PositionRightOf(this, other, d);
         }
         /// <summary>
-        /// Stretch the control right
+        /// Position the control to the left of the other control
         /// </summary>
-        /// <param name="c">The other control</param>
-        /// <param name="d">The distance between the label and the control</param>
-        public void StretchRight(Control c, int d = -1) {
-            MattyControl.StretchRight(this, c, d);
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionLeftOf(Control other, int d = -1) {
+            MattyControl.PositionLeftOf(this, other, d);
+        }
+        /// <summary>
+        /// Position the control to the above the other control
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionAbove(Control other, int d = -1) {
+            MattyControl.PositionAbove(this, other, d);
+        }
+        /// <summary>
+        /// Position the control to the below the other control
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBelow(Control other, int d = -1) {
+            MattyControl.PositionBelow(this, other, d);
         }
 
         /// <summary>
-        /// Stretch the control down
+        /// Position the control in the top right
         /// </summary>
-        /// <param name="factor">The factor to stretch</param>
-        public void StretchDown(float factor) {
-            MattyControl.StretchDown(this, factor);
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionTopRightInside(Control parent, int d = -1) {
+            MattyControl.PositionTopRightInside(this, parent, d);
         }
         /// <summary>
-        /// Stretch the control down
+        /// Position the control in the top left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionTopLeftInside(Control parent, int d = -1) {
+            MattyControl.PositionTopLeftInside(this, parent, d);
+        }
+        /// <summary>
+        /// Position the control in the bottom right
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBottomRightInside(Control parent, int d = -1) {
+            MattyControl.PositionBottomRightInside(this, parent, d);
+        }
+        /// <summary>
+        /// Position the control in the bottom left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBottomLeftInside(Control parent, int d = -1) {
+            MattyControl.PositionBottomLeftInside(this, parent, d);
+        }
+
+        /// <summary>
+        /// Stretch the control to the right
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchRightFactor(float factor) {
+            MattyControl.StretchRightFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control to the right
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchRightFixed(int amount) {
+            MattyControl.StretchRightFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control to the right
         /// </summary>
         /// <param name="parent">The parent user control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void StretchDown(UserControl parent, int d = -1) {
-            MattyControl.StretchDown(this, parent, d);
+        public void StretchRightInside(Control parent, int d = -1) {
+            MattyControl.StretchRightInside(this, parent, d);
         }
         /// <summary>
-        /// Stretch the control down
+        /// Stretch the control to the right
         /// </summary>
         /// <param name="c">The other control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void StretchDown(Control c, int d = -1) {
-            MattyControl.StretchDown(this, c, d);
+        public void StretchRightTo(Control other, int d = -1) {
+            MattyControl.StretchRightTo(this, other, d);
         }
 
-        public Tb(Control parent) {
-            parent.Controls.Add(this);
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchDownFactor(float factor) {
+            MattyControl.StretchDownFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchDownFixed(int amount) {
+            MattyControl.StretchDownFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDownInside(Control parent, int d = -1) {
+            MattyControl.StretchDownInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDownTo(Control other, int d = -1) {
+            MattyControl.StretchDownTo(this, other, d);
+        }
+
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchLeftFactor(float factor) {
+            MattyControl.StretchLeftFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchLeftFixed(int amount) {
+            MattyControl.StretchLeftFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchLeftInside(Control parent, int d = -1) {
+            MattyControl.StretchLeftInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchLeftTo(Control other, int d = -1) {
+            MattyControl.StretchLeftTo(this, other, d);
+        }
+
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchUpFactor(float factor) {
+            MattyControl.StretchUpFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchUpFixed(int amount) {
+            MattyControl.StretchUpFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchUpInside(Control parent, int d = -1) {
+            MattyControl.StretchUpInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchUpTo(Control other, int d = -1) {
+            MattyControl.StretchUpTo(this, other, d);
+        }
+
+
+        /// <summary>
+        /// Move the control to the right
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveRight(int amount) {
+            MattyControl.MoveRight(this, amount);
+        }
+        /// <summary>
+        /// Move the control downwards
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveDown(int amount) {
+            MattyControl.MoveDown(this, amount);
+        }
+        /// <summary>
+        /// Move the control to the left
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveLeft(int amount) {
+            MattyControl.MoveLeft(this, amount);
+        }
+        /// <summary>
+        /// Move the control upwards
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveUp(int amount) {
+            MattyControl.MoveUp(this, amount);
         }
 
     }
 
     public class RichTb : RichTextBox
     {
+        public RichTb(Control parent) {
+            parent.Controls.Add(this);
+        }
+
         /// <summary>
         /// The label for this control
         /// </summary>
@@ -430,12 +1058,12 @@ namespace MattyControls
         /// <summary>
         /// Locate this control inside its parent in a specific way
         /// </summary>
-        /// <param name="c">It's parent</param>
+        /// <param name="parent">It's parent</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
         /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
-        public void LocateInside(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
-            MattyControl.LocateInside(this, c, h, v, d);
+        public void LocateInside(Control parent, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
+            MattyControl.LocateInside(this, parent, h, v, d);
         }
 
         /// <summary>
@@ -444,9 +1072,9 @@ namespace MattyControls
         /// <param name="c">The other control</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
-        /// <param name="distance">The margin</param>
-        public void LocateFrom(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
-            MattyControl.LocateFrom(this, c, h, v, d);
+        /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
+        public void LocateFrom(Control other, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
+            MattyControl.LocateFrom(this, other, h, v, d);
         }
 
         /// <summary>
@@ -463,61 +1091,233 @@ namespace MattyControls
         }
 
         /// <summary>
-        /// Stretch the control right
-        /// </summary>
-        /// <param name="factor">The factor to stretch</param>
-        public void StretchRight(float factor) {
-            MattyControl.StretchRight(this, factor);
-        }
-        /// <summary>
-        /// Stretch the control right
+        /// Position the control to the right of the other control
         /// </summary>
         /// <param name="parent">The parent user control</param>
-        /// <param name="d">The distance between the label and the control</param>
-        public void StretchRight(UserControl parent, int d = -1) {
-            MattyControl.StretchRight(this, parent, d);
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionRightOf(Control other, int d = -1) {
+            MattyControl.PositionRightOf(this, other, d);
         }
         /// <summary>
-        /// Stretch the control right
+        /// Position the control to the left of the other control
         /// </summary>
-        /// <param name="c">The other control</param>
-        /// <param name="d">The distance between the label and the control</param>
-        public void StretchRight(Control c, int d = -1) {
-            MattyControl.StretchRight(this, c, d);
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionLeftOf(Control other, int d = -1) {
+            MattyControl.PositionLeftOf(this, other, d);
+        }
+        /// <summary>
+        /// Position the control to the above the other control
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionAbove(Control other, int d = -1) {
+            MattyControl.PositionAbove(this, other, d);
+        }
+        /// <summary>
+        /// Position the control to the below the other control
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBelow(Control other, int d = -1) {
+            MattyControl.PositionBelow(this, other, d);
         }
 
         /// <summary>
-        /// Stretch the control down
+        /// Position the control in the top right
         /// </summary>
-        /// <param name="factor">The factor to stretch</param>
-        public void StretchDown(float factor) {
-            MattyControl.StretchDown(this, factor);
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionTopRightInside(Control parent, int d = -1) {
+            MattyControl.PositionTopRightInside(this, parent, d);
         }
         /// <summary>
-        /// Stretch the control down
+        /// Position the control in the top left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionTopLeftInside(Control parent, int d = -1) {
+            MattyControl.PositionTopLeftInside(this, parent, d);
+        }
+        /// <summary>
+        /// Position the control in the bottom right
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBottomRightInside(Control parent, int d = -1) {
+            MattyControl.PositionBottomRightInside(this, parent, d);
+        }
+        /// <summary>
+        /// Position the control in the bottom left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBottomLeftInside(Control parent, int d = -1) {
+            MattyControl.PositionBottomLeftInside(this, parent, d);
+        }
+
+        /// <summary>
+        /// Stretch the control to the right
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchRightFactor(float factor) {
+            MattyControl.StretchRightFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control to the right
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchRightFixed(int amount) {
+            MattyControl.StretchRightFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control to the right
         /// </summary>
         /// <param name="parent">The parent user control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void StretchDown(UserControl parent, int d = -1) {
-            MattyControl.StretchDown(this, parent, d);
+        public void StretchRightInside(Control parent, int d = -1) {
+            MattyControl.StretchRightInside(this, parent, d);
         }
         /// <summary>
-        /// Stretch the control down
+        /// Stretch the control to the right
         /// </summary>
         /// <param name="c">The other control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void StretchDown(Control c, int d = -1) {
-            MattyControl.StretchDown(this, c, d);
+        public void StretchRightTo(Control other, int d = -1) {
+            MattyControl.StretchRightTo(this, other, d);
         }
 
-        public RichTb(Control parent) {
-            parent.Controls.Add(this);
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchDownFactor(float factor) {
+            MattyControl.StretchDownFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchDownFixed(int amount) {
+            MattyControl.StretchDownFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDownInside(Control parent, int d = -1) {
+            MattyControl.StretchDownInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDownTo(Control other, int d = -1) {
+            MattyControl.StretchDownTo(this, other, d);
+        }
+
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchLeftFactor(float factor) {
+            MattyControl.StretchLeftFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchLeftFixed(int amount) {
+            MattyControl.StretchLeftFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchLeftInside(Control parent, int d = -1) {
+            MattyControl.StretchLeftInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchLeftTo(Control other, int d = -1) {
+            MattyControl.StretchLeftTo(this, other, d);
+        }
+
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchUpFactor(float factor) {
+            MattyControl.StretchUpFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchUpFixed(int amount) {
+            MattyControl.StretchUpFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchUpInside(Control parent, int d = -1) {
+            MattyControl.StretchUpInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchUpTo(Control other, int d = -1) {
+            MattyControl.StretchUpTo(this, other, d);
+        }
+
+
+        /// <summary>
+        /// Move the control to the right
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveRight(int amount) {
+            MattyControl.MoveRight(this, amount);
+        }
+        /// <summary>
+        /// Move the control downwards
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveDown(int amount) {
+            MattyControl.MoveDown(this, amount);
+        }
+        /// <summary>
+        /// Move the control to the left
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveLeft(int amount) {
+            MattyControl.MoveLeft(this, amount);
+        }
+        /// <summary>
+        /// Move the control upwards
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveUp(int amount) {
+            MattyControl.MoveUp(this, amount);
         }
 
     }
 
     public class Lb : ListBox
     {
+        public Lb(Control parent) {
+            parent.Controls.Add(this);
+        }
+
         /// <summary>
         /// The label for this control
         /// </summary>
@@ -526,12 +1326,12 @@ namespace MattyControls
         /// <summary>
         /// Locate this control inside its parent in a specific way
         /// </summary>
-        /// <param name="c">It's parent</param>
+        /// <param name="parent">It's parent</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
         /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
-        public void LocateInside(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
-            MattyControl.LocateInside(this, c, h, v, d);
+        public void LocateInside(Control parent, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
+            MattyControl.LocateInside(this, parent, h, v, d);
         }
 
         /// <summary>
@@ -540,9 +1340,9 @@ namespace MattyControls
         /// <param name="c">The other control</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
-        /// <param name="distance">The margin</param>
-        public void LocateFrom(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
-            MattyControl.LocateFrom(this, c, h, v, d);
+        /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
+        public void LocateFrom(Control other, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
+            MattyControl.LocateFrom(this, other, h, v, d);
         }
 
         /// <summary>
@@ -559,61 +1359,234 @@ namespace MattyControls
         }
 
         /// <summary>
-        /// Stretch the control right
-        /// </summary>
-        /// <param name="factor">The factor to stretch</param>
-        public void StretchRight(float factor) {
-            MattyControl.StretchRight(this, factor);
-        }
-        /// <summary>
-        /// Stretch the control right
+        /// Position the control to the right of the other control
         /// </summary>
         /// <param name="parent">The parent user control</param>
-        /// <param name="d">The distance between the label and the control</param>
-        public void StretchRight(UserControl parent, int d = -1) {
-            MattyControl.StretchRight(this, parent, d);
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionRightOf(Control other, int d = -1) {
+            MattyControl.PositionRightOf(this, other, d);
         }
         /// <summary>
-        /// Stretch the control right
+        /// Position the control to the left of the other control
         /// </summary>
-        /// <param name="c">The other control</param>
-        /// <param name="d">The distance between the label and the control</param>
-        public void StretchRight(Control c, int d = -1) {
-            MattyControl.StretchRight(this, c, d);
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionLeftOf(Control other, int d = -1) {
+            MattyControl.PositionLeftOf(this, other, d);
+        }
+        /// <summary>
+        /// Position the control to the above the other control
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionAbove(Control other, int d = -1) {
+            MattyControl.PositionAbove(this, other, d);
+        }
+        /// <summary>
+        /// Position the control to the below the other control
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBelow(Control other, int d = -1) {
+            MattyControl.PositionBelow(this, other, d);
         }
 
         /// <summary>
-        /// Stretch the control down
+        /// Position the control in the top right
         /// </summary>
-        /// <param name="factor">The factor to stretch</param>
-        public void StretchDown(float factor) {
-            MattyControl.StretchDown(this, factor);
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionTopRightInside(Control parent, int d = -1) {
+            MattyControl.PositionTopRightInside(this, parent, d);
         }
         /// <summary>
-        /// Stretch the control down
+        /// Position the control in the top left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionTopLeftInside(Control parent, int d = -1) {
+            MattyControl.PositionTopLeftInside(this, parent, d);
+        }
+        /// <summary>
+        /// Position the control in the bottom right
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBottomRightInside(Control parent, int d = -1) {
+            MattyControl.PositionBottomRightInside(this, parent, d);
+        }
+        /// <summary>
+        /// Position the control in the bottom left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBottomLeftInside(Control parent, int d = -1) {
+            MattyControl.PositionBottomLeftInside(this, parent, d);
+        }
+
+        /// <summary>
+        /// Stretch the control to the right
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchRightFactor(float factor) {
+            MattyControl.StretchRightFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control to the right
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchRightFixed(int amount) {
+            MattyControl.StretchRightFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control to the right
         /// </summary>
         /// <param name="parent">The parent user control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void StretchDown(UserControl parent, int d = -1) {
-            MattyControl.StretchDown(this, parent, d);
+        public void StretchRightInside(Control parent, int d = -1) {
+            MattyControl.StretchRightInside(this, parent, d);
         }
         /// <summary>
-        /// Stretch the control down
+        /// Stretch the control to the right
         /// </summary>
         /// <param name="c">The other control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void StretchDown(Control c, int d = -1) {
-            MattyControl.StretchDown(this, c, d);
+        public void StretchRightTo(Control other, int d = -1) {
+            MattyControl.StretchRightTo(this, other, d);
         }
 
-        public Lb(Control parent) {
-            parent.Controls.Add(this);
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchDownFactor(float factor) {
+            MattyControl.StretchDownFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchDownFixed(int amount) {
+            MattyControl.StretchDownFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDownInside(Control parent, int d = -1) {
+            MattyControl.StretchDownInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDownTo(Control other, int d = -1) {
+            MattyControl.StretchDownTo(this, other, d);
+        }
+
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchLeftFactor(float factor) {
+            MattyControl.StretchLeftFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchLeftFixed(int amount) {
+            MattyControl.StretchLeftFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchLeftInside(Control parent, int d = -1) {
+            MattyControl.StretchLeftInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchLeftTo(Control other, int d = -1) {
+            MattyControl.StretchLeftTo(this, other, d);
+        }
+
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchUpFactor(float factor) {
+            MattyControl.StretchUpFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchUpFixed(int amount) {
+            MattyControl.StretchUpFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchUpInside(Control parent, int d = -1) {
+            MattyControl.StretchUpInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchUpTo(Control other, int d = -1) {
+            MattyControl.StretchUpTo(this, other, d);
+        }
+
+
+        /// <summary>
+        /// Move the control to the right
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveRight(int amount) {
+            MattyControl.MoveRight(this, amount);
+        }
+        /// <summary>
+        /// Move the control downwards
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveDown(int amount) {
+            MattyControl.MoveDown(this, amount);
+        }
+        /// <summary>
+        /// Move the control to the left
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveLeft(int amount) {
+            MattyControl.MoveLeft(this, amount);
+        }
+        /// <summary>
+        /// Move the control upwards
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveUp(int amount) {
+            MattyControl.MoveUp(this, amount);
         }
 
     }
 
     public class Db : ComboBox
     {
+        public Db(Control parent) {
+            parent.Controls.Add(this);
+            this.DropDownStyle = ComboBoxStyle.DropDownList;
+        }
+
         /// <summary>
         /// The label for this control
         /// </summary>
@@ -622,12 +1595,12 @@ namespace MattyControls
         /// <summary>
         /// Locate this control inside its parent in a specific way
         /// </summary>
-        /// <param name="c">It's parent</param>
+        /// <param name="parent">It's parent</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
         /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
-        public void LocateInside(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
-            MattyControl.LocateInside(this, c, h, v, d);
+        public void LocateInside(Control parent, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
+            MattyControl.LocateInside(this, parent, h, v, d);
         }
 
         /// <summary>
@@ -636,9 +1609,9 @@ namespace MattyControls
         /// <param name="c">The other control</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
-        /// <param name="distance">The margin</param>
-        public void LocateFrom(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
-            MattyControl.LocateFrom(this, c, h, v, d);
+        /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
+        public void LocateFrom(Control other, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
+            MattyControl.LocateFrom(this, other, h, v, d);
         }
 
         /// <summary>
@@ -655,62 +1628,234 @@ namespace MattyControls
         }
 
         /// <summary>
-        /// Stretch the control right
-        /// </summary>
-        /// <param name="factor">The factor to stretch</param>
-        public void StretchRight(float factor) {
-            MattyControl.StretchRight(this, factor);
-        }
-        /// <summary>
-        /// Stretch the control right
+        /// Position the control to the right of the other control
         /// </summary>
         /// <param name="parent">The parent user control</param>
-        /// <param name="d">The distance between the label and the control</param>
-        public void StretchRight(UserControl parent, int d = -1) {
-            MattyControl.StretchRight(this, parent, d);
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionRightOf(Control other, int d = -1) {
+            MattyControl.PositionRightOf(this, other, d);
         }
         /// <summary>
-        /// Stretch the control right
+        /// Position the control to the left of the other control
         /// </summary>
-        /// <param name="c">The other control</param>
-        /// <param name="d">The distance between the label and the control</param>
-        public void StretchRight(Control c, int d = -1) {
-            MattyControl.StretchRight(this, c, d);
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionLeftOf(Control other, int d = -1) {
+            MattyControl.PositionLeftOf(this, other, d);
+        }
+        /// <summary>
+        /// Position the control to the above the other control
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionAbove(Control other, int d = -1) {
+            MattyControl.PositionAbove(this, other, d);
+        }
+        /// <summary>
+        /// Position the control to the below the other control
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBelow(Control other, int d = -1) {
+            MattyControl.PositionBelow(this, other, d);
         }
 
         /// <summary>
-        /// Stretch the control down
+        /// Position the control in the top right
         /// </summary>
-        /// <param name="factor">The factor to stretch</param>
-        public void StretchDown(float factor) {
-            MattyControl.StretchDown(this, factor);
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionTopRightInside(Control parent, int d = -1) {
+            MattyControl.PositionTopRightInside(this, parent, d);
         }
         /// <summary>
-        /// Stretch the control down
+        /// Position the control in the top left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionTopLeftInside(Control parent, int d = -1) {
+            MattyControl.PositionTopLeftInside(this, parent, d);
+        }
+        /// <summary>
+        /// Position the control in the bottom right
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBottomRightInside(Control parent, int d = -1) {
+            MattyControl.PositionBottomRightInside(this, parent, d);
+        }
+        /// <summary>
+        /// Position the control in the bottom left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBottomLeftInside(Control parent, int d = -1) {
+            MattyControl.PositionBottomLeftInside(this, parent, d);
+        }
+
+        /// <summary>
+        /// Stretch the control to the right
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchRightFactor(float factor) {
+            MattyControl.StretchRightFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control to the right
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchRightFixed(int amount) {
+            MattyControl.StretchRightFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control to the right
         /// </summary>
         /// <param name="parent">The parent user control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void StretchDown(UserControl parent, int d = -1) {
-            MattyControl.StretchDown(this, parent, d);
+        public void StretchRightInside(Control parent, int d = -1) {
+            MattyControl.StretchRightInside(this, parent, d);
         }
         /// <summary>
-        /// Stretch the control down
+        /// Stretch the control to the right
         /// </summary>
         /// <param name="c">The other control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void StretchDown(Control c, int d = -1) {
-            MattyControl.StretchDown(this, c, d);
+        public void StretchRightTo(Control other, int d = -1) {
+            MattyControl.StretchRightTo(this, other, d);
         }
 
-        public Db(Control parent) {
-            parent.Controls.Add(this);
-            this.DropDownStyle = ComboBoxStyle.DropDownList;
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchDownFactor(float factor) {
+            MattyControl.StretchDownFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchDownFixed(int amount) {
+            MattyControl.StretchDownFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDownInside(Control parent, int d = -1) {
+            MattyControl.StretchDownInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDownTo(Control other, int d = -1) {
+            MattyControl.StretchDownTo(this, other, d);
+        }
+
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchLeftFactor(float factor) {
+            MattyControl.StretchLeftFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchLeftFixed(int amount) {
+            MattyControl.StretchLeftFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchLeftInside(Control parent, int d = -1) {
+            MattyControl.StretchLeftInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchLeftTo(Control other, int d = -1) {
+            MattyControl.StretchLeftTo(this, other, d);
+        }
+
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchUpFactor(float factor) {
+            MattyControl.StretchUpFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchUpFixed(int amount) {
+            MattyControl.StretchUpFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchUpInside(Control parent, int d = -1) {
+            MattyControl.StretchUpInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchUpTo(Control other, int d = -1) {
+            MattyControl.StretchUpTo(this, other, d);
+        }
+
+
+        /// <summary>
+        /// Move the control to the right
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveRight(int amount) {
+            MattyControl.MoveRight(this, amount);
+        }
+        /// <summary>
+        /// Move the control downwards
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveDown(int amount) {
+            MattyControl.MoveDown(this, amount);
+        }
+        /// <summary>
+        /// Move the control to the left
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveLeft(int amount) {
+            MattyControl.MoveLeft(this, amount);
+        }
+        /// <summary>
+        /// Move the control upwards
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveUp(int amount) {
+            MattyControl.MoveUp(this, amount);
         }
 
     }
 
     public class Lbl : Label
     {
+        public Lbl(string text, Control parent) {
+            this.Text = text;
+            parent.Controls.Add(this);
+        }
+
         /// <summary>
         /// The label for this control
         /// </summary>
@@ -719,12 +1864,12 @@ namespace MattyControls
         /// <summary>
         /// Locate this control inside its parent in a specific way
         /// </summary>
-        /// <param name="c">It's parent</param>
+        /// <param name="parent">It's parent</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
         /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
-        public void LocateInside(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
-            MattyControl.LocateInside(this, c, h, v, d);
+        public void LocateInside(Control parent, MattyControl.Horizontal h = MattyControl.Horizontal.Left, MattyControl.Vertical v = MattyControl.Vertical.Top, int d = -1) {
+            MattyControl.LocateInside(this, parent, h, v, d);
         }
 
         /// <summary>
@@ -733,9 +1878,9 @@ namespace MattyControls
         /// <param name="c">The other control</param>
         /// <param name="h">The horizontal placement</param>
         /// <param name="v">The vertical placement</param>
-        /// <param name="distance">The margin</param>
-        public void LocateFrom(Control c, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
-            MattyControl.LocateFrom(this, c, h, v, d);
+        /// <param name="d">The margin (distance), use MattyControl.Distance if -1</param>
+        public void LocateFrom(Control other, MattyControl.Horizontal h = MattyControl.Horizontal.CopyLeft, MattyControl.Vertical v = MattyControl.Vertical.CopyTop, int d = -1) {
+            MattyControl.LocateFrom(this, other, h, v, d);
         }
 
         /// <summary>
@@ -752,56 +1897,223 @@ namespace MattyControls
         }
 
         /// <summary>
-        /// Stretch the control right
-        /// </summary>
-        /// <param name="factor">The factor to stretch</param>
-        public void StretchRight(float factor) {
-            MattyControl.StretchRight(this, factor);
-        }
-        /// <summary>
-        /// Stretch the control right
+        /// Position the control to the right of the other control
         /// </summary>
         /// <param name="parent">The parent user control</param>
-        /// <param name="d">The distance between the label and the control</param>
-        public void StretchRight(UserControl parent, int d = -1) {
-            MattyControl.StretchRight(this, parent, d);
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionRightOf(Control other, int d = -1) {
+            MattyControl.PositionRightOf(this, other, d);
         }
         /// <summary>
-        /// Stretch the control right
+        /// Position the control to the left of the other control
         /// </summary>
-        /// <param name="c">The other control</param>
-        /// <param name="d">The distance between the label and the control</param>
-        public void StretchRight(Control c, int d = -1) {
-            MattyControl.StretchRight(this, c, d);
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionLeftOf(Control other, int d = -1) {
+            MattyControl.PositionLeftOf(this, other, d);
+        }
+        /// <summary>
+        /// Position the control to the above the other control
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionAbove(Control other, int d = -1) {
+            MattyControl.PositionAbove(this, other, d);
+        }
+        /// <summary>
+        /// Position the control to the below the other control
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBelow(Control other, int d = -1) {
+            MattyControl.PositionBelow(this, other, d);
         }
 
         /// <summary>
-        /// Stretch the control down
+        /// Position the control in the top right
         /// </summary>
-        /// <param name="factor">The factor to stretch</param>
-        public void StretchDown(float factor) {
-            MattyControl.StretchDown(this, factor);
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionTopRightInside(Control parent, int d = -1) {
+            MattyControl.PositionTopRightInside(this, parent, d);
         }
         /// <summary>
-        /// Stretch the control down
+        /// Position the control in the top left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionTopLeftInside(Control parent, int d = -1) {
+            MattyControl.PositionTopLeftInside(this, parent, d);
+        }
+        /// <summary>
+        /// Position the control in the bottom right
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBottomRightInside(Control parent, int d = -1) {
+            MattyControl.PositionBottomRightInside(this, parent, d);
+        }
+        /// <summary>
+        /// Position the control in the bottom left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the parent's border and the control</param>
+        public void PositionBottomLeftInside(Control parent, int d = -1) {
+            MattyControl.PositionBottomLeftInside(this, parent, d);
+        }
+
+        /// <summary>
+        /// Stretch the control to the right
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchRightFactor(float factor) {
+            MattyControl.StretchRightFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control to the right
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchRightFixed(int amount) {
+            MattyControl.StretchRightFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control to the right
         /// </summary>
         /// <param name="parent">The parent user control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void StretchDown(UserControl parent, int d = -1) {
-            MattyControl.StretchDown(this, parent, d);
+        public void StretchRightInside(Control parent, int d = -1) {
+            MattyControl.StretchRightInside(this, parent, d);
         }
         /// <summary>
-        /// Stretch the control down
+        /// Stretch the control to the right
         /// </summary>
         /// <param name="c">The other control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void StretchDown(Control c, int d = -1) {
-            MattyControl.StretchDown(this, c, d);
+        public void StretchRightTo(Control other, int d = -1) {
+            MattyControl.StretchRightTo(this, other, d);
         }
 
-        public Lbl(string text, Control parent) {
-            this.Text = text;
-            parent.Controls.Add(this);
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchDownFactor(float factor) {
+            MattyControl.StretchDownFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchDownFixed(int amount) {
+            MattyControl.StretchDownFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDownInside(Control parent, int d = -1) {
+            MattyControl.StretchDownInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control downwards
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchDownTo(Control other, int d = -1) {
+            MattyControl.StretchDownTo(this, other, d);
+        }
+
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchLeftFactor(float factor) {
+            MattyControl.StretchLeftFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchLeftFixed(int amount) {
+            MattyControl.StretchLeftFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchLeftInside(Control parent, int d = -1) {
+            MattyControl.StretchLeftInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control to the left
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchLeftTo(Control other, int d = -1) {
+            MattyControl.StretchLeftTo(this, other, d);
+        }
+
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="factor">The factor to stretch</param>
+        public void StretchUpFactor(float factor) {
+            MattyControl.StretchUpFactor(this, factor);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="amount">The amount to stretch</param>
+        public void StretchUpFixed(int amount) {
+            MattyControl.StretchUpFixed(this, amount);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="parent">The parent user control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchUpInside(Control parent, int d = -1) {
+            MattyControl.StretchUpInside(this, parent, d);
+        }
+        /// <summary>
+        /// Stretch the control upwards
+        /// </summary>
+        /// <param name="c">The other control</param>
+        /// <param name="d">The distance between the label and the control</param>
+        public void StretchUpTo(Control other, int d = -1) {
+            MattyControl.StretchUpTo(this, other, d);
+        }
+
+
+        /// <summary>
+        /// Move the control to the right
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveRight(int amount) {
+            MattyControl.MoveRight(this, amount);
+        }
+        /// <summary>
+        /// Move the control downwards
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveDown(int amount) {
+            MattyControl.MoveDown(this, amount);
+        }
+        /// <summary>
+        /// Move the control to the left
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveLeft(int amount) {
+            MattyControl.MoveLeft(this, amount);
+        }
+        /// <summary>
+        /// Move the control upwards
+        /// </summary>
+        /// <param name="amount">The number of pixels to move</param>
+        public void MoveUp(int amount) {
+            MattyControl.MoveUp(this, amount);
         }
 
     }
