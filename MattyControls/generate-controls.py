@@ -11,6 +11,10 @@ def lineIs(line : str, search : str):
     pattern = re.compile('^\s*' + search + '\s*$')
     return bool(pattern.match(line))
 
+def lineBeginsWith(line : str, search : str):
+    pattern = re.compile('^\s*' + search)
+    return bool(pattern.match(line))
+
 specialPattern = re.compile('^\s*// --')
 def lineIsSpecial(line : str):
     return bool(specialPattern.match(line))
@@ -24,78 +28,143 @@ class Control:
         self.basetype = basetype
         self.constructor = ''
 
-    def writeToFile(self, fto):
+    def writeToFile(self, fto, controlcopy):
         def w(s = ''):
             fto.write(s + '\n')
 
         w()
         w('    public class {} : {}'.format(self.typename, self.basetype))
         w('    {')
-        w(controlcopy)
         w(self.constructor)
+        w(controlcopy)
         w('    }')
 
 
 
-# The function that does all the parsing and compiling
-status = 0
-lines = []
-controlcopy = ''
-controls = []
+# The actual compiler
+class FlatCompiler:
+    def __init__(self):
+        self.status = 0
+        self.lines = []
+        self.controlcopy = ''
+        self.controls = []
 
-def compile(line : str, fto):
-    # Yeah, I know, a bit ugly, but hey, it works
-    global status, lines, controlcopy, controls
+    # The function that does all the parsing and compiling, line by line (foreach'es are already dealt with)
+    def compile(self, line : str, fto):
+        # normal (read and write directly)
+        if self.status == 0:
+            self._normalMode()
 
-    # normal (read and write directly)
-    if status == 0:
+        # Parse the types and corresponding constructor function(s)
+        elif self.status == 1:
+            self._parseTypesMode()
+
+        # Copy the control methods
+        elif self.status == 2:
+            self._copyControlsMode()
+
+    def _normalMode(self):
         if lineIsSpecial(line):
             # Ok, pay attention now
             if lineIs(line, '// -- begin types --'):
                 print('Begin types ...')
-                status = 1
+                self.status = 1
             elif lineIs(line, '// -- begin control copy --'):
                 print('Begin control copy ...')
-                status = 2
+                self.status = 2
             elif lineIs(line, '// -- write controls --'):
                 print('Write controls ...')
-                for c in controls:
-                    c.writeToFile(fto)
+                for c in self.controls:
+                    c.writeToFile(fto, self.controlcopy)
         else:
+            # Read and write directly
             fto.write(line)
 
-    # Parse the types and corresponding constructor function(s)
-    elif status == 1:
+    def _parseTypesMode(self):
         if lineIsSpecial(line):
             # Finish the previous control
             try:
-                controls[-1].constructor = ''.join(lines)
-                lines = []
-            except:
+                self.controls[-1].constructor = ''.join(self.lines)
+                self.lines = []
+            except IndexError:
                 pass
 
             # If there is no new control, go back to normal
             if lineIs(line, '// -- end types --'):
-                status = 0
-                lines = []
+                self.status = 0
+                self.lines = []
             else:
                 # Start a new control
                 m = re.search('^\s*// -- (\w+) : (\w+)\s*$', line)
-                controls.append(Control(m.group(1), m.group(2)))
+                self.controls.append(Control(m.group(1), m.group(2)))
         else:
             # Save the constructor functions
-            lines.append(line)
+            self.lines.append(line)
 
-    # Copy the control methods
-    elif status == 2:
+    def _copyControlsMode(self):
         if lineIs(line, '// -- end control copy --'):
             # End of the control methods
-            controlcopy = ''.join(lines)
-            status = 0
-            lines = []
+            self.controlcopy = ''.join(self.lines)
+            self.status = 0
+            self.lines = []
         else:
             # Add to the control methods
-            lines.append(line)
+            self.lines.append(line)
+
+
+# The compiler that 'executes' the loop before we give the template file to the actual compiler
+class LoopPreCompiler:
+    def __init__(self):
+        self.isForeach = False # This means I don't support nested foreach'es
+        self.lines = None
+        self.loopVariables = None
+        self.loopList = None
+
+    # The function that duplicates the lines surrounded by a foreach marker
+    def compile(self, result, line):
+        # Detect foreach
+        if lineBeginsWith(line, '// -- foreach '):
+            self._readForeach()
+            return
+
+        # Handle foreach
+        if lineIs(line, '// -- endforeach --'):
+            self._writeForeach(result)
+            return
+
+        # Copy the lines we want to loop
+        if self.isForeach:
+            self.lines.append(line)
+            return
+
+        # Nothing special
+        result.append(line)
+
+    def _readForeach(self):
+        m = re.search('^\s*// -- foreach (.*) in \[(.+)\] --\s*$', line)
+        self.loopVariables = [s.strip() for s in m.group(1).split(',')]
+        self.loopList = eval("[{}]".format(m.group(2)))
+
+        self.isForeach = True
+        self.lines = []
+
+    def _writeForeach(self, result):
+        for things in self.loopList:
+            replacements = self._arrify(things)
+            for line in self.lines:
+                for name, content in zip(self.loopVariables, replacements):
+                    line = line.replace('{{{' + name + '}}}', content)
+
+                result.append(line)
+
+        self.isForeach = False
+
+    def _arrify(self, things):
+        try:
+            things[0]
+        except:
+            things = [things]
+        return things
 
 
 
@@ -106,7 +175,13 @@ with open(filename_to, 'w') as fto:
     fto.write('//\n')
 
     with open(filename_from) as ffrom:
+        sourceLines = []
+        loopCompiler = LoopPreCompiler()
         for line in ffrom:
-            compile(line, fto)
+            loopCompiler.compile(sourceLines, line)
+
+        flatCompiler = FlatCompiler()
+        for line in sourceLines:
+            flatCompiler.compile(line, fto)
 
 print('Done')
