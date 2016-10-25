@@ -1,17 +1,17 @@
 ﻿using System;
-using System.IO;
-using System.Text;
-using System.Drawing;
-using System.Windows.Forms;
 using System.Collections.Generic;
+using System.Drawing;
+using System.IO;
+using System.Linq;
+using System.Text;
+using System.Windows.Forms;
 
 namespace MattyControls
 {
     public class SettingsSingleton
     {
-        protected virtual string path {
-            get { return Application.StartupPath + Path.DirectorySeparatorChar + "settings.ini"; }
-        }
+        protected virtual string Name => "settings";
+        protected virtual string Path => Application.StartupPath + System.IO.Path.DirectorySeparatorChar + Name + ".ini";
 
         #region Settings internals
 
@@ -70,19 +70,40 @@ namespace MattyControls
         protected void set(string key, Point value) {
             this.set(key, Vec2Str(value));
         }
-        // Int[]
-        protected int[] get(string key, int[] defaultValue, string separator = ",") {
-            string[] values = this.get(key, String.Join<int>(separator, defaultValue)).Split(new string[] { separator }, StringSplitOptions.RemoveEmptyEntries);
-            int[] result = new int[values.Length];
-            for (int i = 0; i < result.Length; i++)
-                result[i] = int.Parse(values[i]);
-            return result;
-        }
-        protected void set(string key, int[] value, string separator = ",") {
-            this.set(key, String.Join<int>(separator, value));
+        // Color
+        protected Color get(string key, Color defaultValue) {
+            return Str2Color(this.get(key, Color2Str(defaultValue)));
         }
 
-        // Settings properties
+        protected void set(string key, Color value) {
+            this.set(key, Color2Str(value));
+        }
+        // String[], List<string>, IEnumerable<string>, ...
+        protected string[] get(string key, string[] defaultValue, string separator = ",") {
+            return this.get(key, defaultValue).ToArray();
+        }
+        protected List<string> get(string key, List<string> defaultValue, string separator = ",") {
+            return this.get(key, defaultValue).ToList();
+        }
+        protected IEnumerable<string> get(string key, IEnumerable<string> defaultValue, string separator = ",") {
+            return this.get(key, string.Join(separator, defaultValue)).Split(new string[] { separator }, StringSplitOptions.RemoveEmptyEntries);
+        }
+        protected void set(string key, IEnumerable<string> value, string separator = ",") {
+            this.set(key, string.Join(separator, value));
+        }
+        // Int[], List<int>, IEnumerable<int>, ...
+        protected int[] get(string key, int[] defaultValue, string separator = ",") {
+            return this.get(key, defaultValue, separator).ToArray();
+        }
+        protected List<int> get(string key, List<int> defaultValue, string separator = ",") {
+            return this.get(key, defaultValue, separator).ToList();
+        }
+        protected IEnumerable<int> get(string key, IEnumerable<int> defaultValue, string separator = ",") {
+            return this.get(key, defaultValue.Select(i => i.ToString())).Select(int.Parse).ToArray();
+        }
+        protected void set(string key, IEnumerable<int> value, string separator = ",") {
+            this.set(key, string.Join<int>(separator, value));
+        }
 
         // Private settings methods
         protected SettingsSingleton() {
@@ -93,29 +114,29 @@ namespace MattyControls
         public override string ToString() {
             return this.ToString(null);
         }
-        public string ToString(char seperator) {
-            return this.ToString(null, seperator);
+        public string ToString(char separator) {
+            return this.ToString(null, separator);
         }
-        public string ToString(List<string> properties, char seperator = ';') {
-            return this.ToString(properties, seperator, Environment.NewLine);
+        public string ToString(List<string> properties, char separator = ';') {
+            return this.ToString(properties, separator, Environment.NewLine);
         }
-        public string ToString(List<string> properties, char seperator, string endSeperator) {
+        public string ToString(List<string> properties, char separator, string endSeperator) {
             // Write all hashlist values with keys in the properties list to a string, write all if the propertieslist is left null
             StringBuilder s = new StringBuilder();
             foreach (var tuple in this.hashList)
                 if (properties == null || properties.Contains(tuple.Key))
-                    s.Append(tuple.Key + seperator + tuple.Value + endSeperator);
+                    s.Append(tuple.Key + separator + tuple.Value + endSeperator);
             return s.ToString();
         }
 
-        public void FromString(string s, char seperator = ';') {
-            this.FromString(s, seperator, Environment.NewLine);
+        public void FromString(string s, char separator = ';') {
+            this.FromString(s, separator, Environment.NewLine);
         }
-        public void FromString(string s, char seperator, string endSeperator) {
+        public void FromString(string s, char separator, string endSeperator) {
             // Override hashlist with values from s (values not in s will be left intact)
             string[] lines = s.Split(endSeperator.ToCharArray());
             for (int i = 0; i < lines.Length; i++) {
-                string[] keyVal = lines[i].Split(seperator);
+                string[] keyVal = lines[i].Split(separator);
                 if (keyVal[0] != "")
                     this.hashList[keyVal[0]] = keyVal[1];
             }
@@ -128,10 +149,10 @@ namespace MattyControls
         public bool Load() {
             bool noError = false;
             // If the file doesnt exist, load the defaults
-            if (!File.Exists(this.path))
+            if (!File.Exists(this.Path))
                 return false;
             try {
-                using (StreamReader file = new StreamReader(this.path)) {
+                using (StreamReader file = new StreamReader(this.Path)) {
                     this.FromString(file.ReadToEnd());
                     noError = true;
                 }
@@ -150,7 +171,7 @@ namespace MattyControls
         public bool Save() {
             bool noError = false;
             try {
-                using (StreamWriter file = new StreamWriter(this.path)) {
+                using (StreamWriter file = new StreamWriter(this.Path)) {
                     file.WriteLine(this.ToString());
                     noError = true;
                 }
@@ -173,17 +194,17 @@ namespace MattyControls
         /// </summary>
         /// <param name="v"></param>
         /// <returns></returns>
-        public static string Vec2Str(Point v, char seperator = ',') {
-            return ((int)v.X).ToString() + seperator + ((int)v.Y).ToString();
+        public static string Vec2Str(Point v, char separator = ',') {
+            return ((int)v.X).ToString() + separator + ((int)v.Y).ToString();
         }
         /// <summary>
         /// Parse a string to a vector2 (with integer values)
         /// </summary>
         /// <param name="s"></param>
-        /// <param name="seperator"></param>
+        /// <param name="separator"></param>
         /// <returns></returns>
-        public static Point Str2Vec(string s, char seperator = ',') {
-            string[] vs = s.Split(seperator);
+        public static Point Str2Vec(string s, char separator = ',') {
+            string[] vs = s.Split(separator);
             return new Point(int.Parse(vs[0]), int.Parse(vs[1]));
         }
 
@@ -192,20 +213,42 @@ namespace MattyControls
         /// </summary>
         /// <param name="v"></param>
         /// <returns></returns>
-        public static string Vec2StrF(Point v, char seperator = ',') {
-            return v.X.ToString() + seperator + v.Y.ToString();
+        public static string Vec2StrF(Point v, char separator = ',') {
+            return v.X.ToString() + separator + v.Y.ToString();
         }
         /// <summary>
         /// Parse a string to a vector2 (with floating point values)
         /// </summary>
         /// <param name="s"></param>
-        /// <param name="seperator"></param>
+        /// <param name="separator"></param>
         /// <returns></returns>
-        public static Point Str2VecF(string s, char seperator = ',') {
-            string[] vs = s.Split(seperator);
+        public static Point Str2VecF(string s, char separator = ',') {
+            string[] vs = s.Split(separator);
             return new Point(int.Parse(vs[0]), int.Parse(vs[1]));
         }
 
+        /// <summary>
+        /// Parse a color to a string
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="separator"></param>
+        /// <returns></returns>
+        public static string Color2Str(Color c, char separator = ',') {
+            return c.A.ToString() + separator + c.R.ToString() + separator + c.G.ToString() + separator + c.B.ToString();
+        }
+
+        /// <summary>
+        /// Parse a string to a color
+        /// </summary>
+        /// <param name="s"></param>
+        /// <param name="separator"></param>
+        /// <returns></returns>
+        public static Color Str2Color(string s, char separator = ',') {
+            string[] cs = s.Split(separator);
+            if (cs.Length == 3)
+                return Color.FromArgb(int.Parse(cs[0]), int.Parse(cs[1]), int.Parse(cs[2]));
+            return Color.FromArgb(int.Parse(cs[0]), int.Parse(cs[1]), int.Parse(cs[2]), int.Parse(cs[3]));
+        }
         #endregion
 
         public Point Position {
