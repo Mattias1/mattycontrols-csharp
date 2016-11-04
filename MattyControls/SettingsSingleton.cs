@@ -13,9 +13,6 @@ namespace MattyControls
         protected virtual string Name => "settings";
         protected virtual string Path => Application.StartupPath + System.IO.Path.DirectorySeparatorChar + Name + ".ini";
 
-        #region Settings internals
-
-        // Singleton code
         /// <summary>
         /// The settings instance
         /// </summary>
@@ -27,114 +24,15 @@ namespace MattyControls
             return SettingsSingleton.instance == null ? (T)(SettingsSingleton.instance = new T()) : (T)SettingsSingleton.instance;
         }
 
-        // The list with all settings
         /// <summary>
-        /// The list with all settings. All keys are lowercase.
+        /// The list with all settings.
         /// </summary>
         protected Dictionary<string, string> hashList;
 
-        // String
-        protected string get(string key, string defaultValue) {
-            if (!this.hashList.ContainsKey(key)) {
-                this.set(key, defaultValue);
-            }
-            return this.hashList[key];
-        }
-        protected void set(string key, string value) {
-            this.hashList[key] = value;
-        }
-
-        // Bool
-        protected bool get(string key, bool defaultValue) {
-            return bool.Parse(this.get(key, defaultValue.ToString()));
-        }
-        protected void set(string key, bool value) {
-            this.set(key, value.ToString());
-        }
-        // Int
-        protected int get(string key, int defaultValue) {
-            return int.Parse(this.get(key, defaultValue.ToString()));
-        }
-        protected void set(string key, int value) {
-            this.set(key, value.ToString());
-        }
-        // Long
-        protected long get(string key, long defaultValue) {
-            return long.Parse(this.get(key, defaultValue.ToString()));
-        }
-        protected void set(string key, long value) {
-            this.set(key, value.ToString());
-        }
-        // Float
-        protected float get(string key, float defaultValue) {
-            return float.Parse(this.get(key, defaultValue.ToString()));
-        }
-        protected void set(string key, float value) {
-            this.set(key, value.ToString());
-        }
-        // Double
-        protected double get(string key, double defaultValue) {
-            return double.Parse(this.get(key, defaultValue.ToString()));
-        }
-        protected void set(string key, double value) {
-            this.set(key, value.ToString());
-        }
-
-        // Point
-        protected Point get(string key, Point defaultValue) {
-            return Str2Vec(this.get(key, Vec2Str(defaultValue)));
-        }
-        protected void set(string key, Point value) {
-            this.set(key, Vec2Str(value));
-        }
-        // Size
-        protected Size get(string key, Size defaultValue) {
-            return new Size(this.get(key, new Point(defaultValue)));
-        }
-        protected void set(string key, Size value) {
-            this.set(key, new Point(value));
-        }
-        // Color
-        protected Color get(string key, Color defaultValue) {
-            return Str2Color(this.get(key, Color2Str(defaultValue)));
-        }
-        protected void set(string key, Color value) {
-            this.set(key, Color2Str(value));
-        }
-
-        // String[], List<string>, IEnumerable<string>, ...
-        protected string[] get(string key, string[] defaultValue, string separator = ",") {
-            return this.get(key, defaultValue).ToArray();
-        }
-        protected List<string> get(string key, List<string> defaultValue, string separator = ",") {
-            return this.get(key, defaultValue).ToList();
-        }
-        protected IEnumerable<string> get(string key, IEnumerable<string> defaultValue, string separator = ",") {
-            return this.get(key, string.Join(separator, defaultValue)).Split(new string[] { separator }, StringSplitOptions.RemoveEmptyEntries);
-        }
-        protected void set(string key, IEnumerable<string> value, string separator = ",") {
-            this.set(key, string.Join(separator, value));
-        }
-        // Int[], List<int>, IEnumerable<int>, ...
-        protected int[] get(string key, int[] defaultValue, string separator = ",") {
-            return this.get(key, defaultValue, separator).ToArray();
-        }
-        protected List<int> get(string key, List<int> defaultValue, string separator = ",") {
-            return this.get(key, defaultValue, separator).ToList();
-        }
-        protected IEnumerable<int> get(string key, IEnumerable<int> defaultValue, string separator = ",") {
-            return this.get(key, defaultValue.Select(i => i.ToString())).Select(int.Parse).ToArray();
-        }
-        protected void set(string key, IEnumerable<int> value, string separator = ",") {
-            this.set(key, string.Join<int>(separator, value));
-        }
-
-        // Private settings methods
         protected SettingsSingleton() {
             this.SetDefaults();
         }
 
-        // Public settings methods
         public override string ToString() {
             return this.ToString(null);
         }
@@ -221,6 +119,121 @@ namespace MattyControls
             this.hashList = new Dictionary<string, string>();
         }
 
+        public Point Position {
+            get { return this.get("position", Point.Empty); }
+            set { this.set("position", value); }
+        }
+
+        public Size Size {
+            get { return this.get("size", Size.Empty); }
+            set { this.set("size", value); }
+        }
+
+        #region Getters, setters and converters
+
+        // String
+        protected string get(string key, string defaultValue) {
+            if (!this.hashList.ContainsKey(key)) {
+                this.set(key, defaultValue);
+            }
+            return this.hashList[key];
+        }
+        protected void set(string key, string value) {
+            this.hashList[key] = value;
+        }
+
+        // Bool
+        protected bool get(string key, bool defaultValue) {
+            return bool.Parse(this.get(key, defaultValue.ToString()));
+        }
+        protected void set(string key, bool value) {
+            this.set(key, value.ToString());
+        }
+
+        // Int
+        protected int get(string key, int defaultValue) {
+            return int.Parse(this.get(key, defaultValue.ToString()));
+        }
+        protected void set(string key, int value) {
+            this.set(key, value.ToString());
+        }
+
+        // Long
+        protected long get(string key, long defaultValue) {
+            return long.Parse(this.get(key, defaultValue.ToString()));
+        }
+        protected void set(string key, long value) {
+            this.set(key, value.ToString());
+        }
+
+        // Float
+        protected float get(string key, float defaultValue) {
+            return float.Parse(this.get(key, defaultValue.ToString()));
+        }
+        protected void set(string key, float value) {
+            this.set(key, value.ToString());
+        }
+
+        // Double
+        protected double get(string key, double defaultValue) {
+            return double.Parse(this.get(key, defaultValue.ToString()));
+        }
+        protected void set(string key, double value) {
+            this.set(key, value.ToString());
+        }
+
+        // Point
+        protected Point get(string key, Point defaultValue) {
+            return Str2Vec(this.get(key, Vec2Str(defaultValue)));
+        }
+        protected void set(string key, Point value) {
+            this.set(key, Vec2Str(value));
+        }
+
+        // Size
+        protected Size get(string key, Size defaultValue) {
+            return new Size(this.get(key, new Point(defaultValue)));
+        }
+        protected void set(string key, Size value) {
+            this.set(key, new Point(value));
+        }
+
+        // Color
+        protected Color get(string key, Color defaultValue) {
+            return Str2Color(this.get(key, Color2Str(defaultValue)));
+        }
+        protected void set(string key, Color value) {
+            this.set(key, Color2Str(value));
+        }
+
+        // String[], List<string>, IEnumerable<string>, ...
+        protected string[] get(string key, string[] defaultValue, string separator = ",") {
+            return this.get(key, defaultValue).ToArray();
+        }
+        protected List<string> get(string key, List<string> defaultValue, string separator = ",") {
+            return this.get(key, defaultValue).ToList();
+        }
+        protected IEnumerable<string> get(string key, IEnumerable<string> defaultValue, string separator = ",") {
+            return this.get(key, string.Join(separator, defaultValue)).Split(new string[] { separator }, StringSplitOptions.RemoveEmptyEntries);
+        }
+        protected void set(string key, IEnumerable<string> value, string separator = ",") {
+            this.set(key, string.Join(separator, value));
+        }
+
+        // Int[], List<int>, IEnumerable<int>, ...
+        protected int[] get(string key, int[] defaultValue, string separator = ",") {
+            return this.get(key, defaultValue, separator).ToArray();
+        }
+        protected List<int> get(string key, List<int> defaultValue, string separator = ",") {
+            return this.get(key, defaultValue, separator).ToList();
+        }
+        protected IEnumerable<int> get(string key, IEnumerable<int> defaultValue, string separator = ",") {
+            return this.get(key, defaultValue.Select(i => i.ToString())).Select(int.Parse).ToArray();
+        }
+        protected void set(string key, IEnumerable<int> value, string separator = ",") {
+            this.set(key, string.Join<int>(separator, value));
+        }
+
         /// <summary>
         /// Parse an vector2 (with integer values) to a string
         /// </summary>
@@ -282,16 +295,7 @@ namespace MattyControls
             }
             return Color.FromArgb(int.Parse(cs[0]), int.Parse(cs[1]), int.Parse(cs[2]), int.Parse(cs[3]));
         }
+
         #endregion
-
-        public Point Position {
-            get { return this.get("position", Point.Empty); }
-            set { this.set("position", value); }
-        }
-
-        public Size Size {
-            get { return this.get("size", Size.Empty); }
-            set { this.set("size", value); }
-        }
     }
 }
