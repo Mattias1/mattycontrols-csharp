@@ -35,13 +35,15 @@ namespace MattyControls
 
         // String
         protected string get(string key, string defaultValue) {
-            if (!this.hashList.ContainsKey(key))
+            if (!this.hashList.ContainsKey(key)) {
                 this.set(key, defaultValue);
+            }
             return this.hashList[key];
         }
         protected void set(string key, string value) {
             this.hashList[key] = value;
         }
+
         // Bool
         protected bool get(string key, bool defaultValue) {
             return bool.Parse(this.get(key, defaultValue.ToString()));
@@ -56,6 +58,13 @@ namespace MattyControls
         protected void set(string key, int value) {
             this.set(key, value.ToString());
         }
+        // Long
+        protected long get(string key, long defaultValue) {
+            return long.Parse(this.get(key, defaultValue.ToString()));
+        }
+        protected void set(string key, long value) {
+            this.set(key, value.ToString());
+        }
         // Float
         protected float get(string key, float defaultValue) {
             return float.Parse(this.get(key, defaultValue.ToString()));
@@ -63,6 +72,14 @@ namespace MattyControls
         protected void set(string key, float value) {
             this.set(key, value.ToString());
         }
+        // Double
+        protected double get(string key, double defaultValue) {
+            return double.Parse(this.get(key, defaultValue.ToString()));
+        }
+        protected void set(string key, double value) {
+            this.set(key, value.ToString());
+        }
+
         // Point
         protected Point get(string key, Point defaultValue) {
             return Str2Vec(this.get(key, Vec2Str(defaultValue)));
@@ -70,14 +87,21 @@ namespace MattyControls
         protected void set(string key, Point value) {
             this.set(key, Vec2Str(value));
         }
+        // Size
+        protected Size get(string key, Size defaultValue) {
+            return new Size(this.get(key, new Point(defaultValue)));
+        }
+        protected void set(string key, Size value) {
+            this.set(key, new Point(value));
+        }
         // Color
         protected Color get(string key, Color defaultValue) {
             return Str2Color(this.get(key, Color2Str(defaultValue)));
         }
-
         protected void set(string key, Color value) {
             this.set(key, Color2Str(value));
         }
+
         // String[], List<string>, IEnumerable<string>, ...
         protected string[] get(string key, string[] defaultValue, string separator = ",") {
             return this.get(key, defaultValue).ToArray();
@@ -123,9 +147,11 @@ namespace MattyControls
         public string ToString(List<string> properties, char separator, string endSeperator) {
             // Write all hashlist values with keys in the properties list to a string, write all if the propertieslist is left null
             StringBuilder s = new StringBuilder();
-            foreach (var tuple in this.hashList)
-                if (properties == null || properties.Contains(tuple.Key))
+            foreach (var tuple in this.hashList) {
+                if (properties == null || properties.Contains(tuple.Key)) {
                     s.Append(tuple.Key + separator + tuple.Value + endSeperator);
+                }
+            }
             return s.ToString();
         }
 
@@ -137,8 +163,9 @@ namespace MattyControls
             string[] lines = s.Split(endSeperator.ToCharArray());
             for (int i = 0; i < lines.Length; i++) {
                 string[] keyVal = lines[i].Split(separator);
-                if (keyVal[0] != "")
+                if (keyVal[0] != "") {
                     this.hashList[keyVal[0]] = keyVal[1];
+                }
             }
         }
 
@@ -148,9 +175,12 @@ namespace MattyControls
         /// <returns>Whether there was an error loading</returns>
         public bool Load() {
             bool noError = false;
+
             // If the file doesnt exist, load the defaults
-            if (!File.Exists(this.Path))
+            if (!File.Exists(this.Path)) {
                 return false;
+            }
+
             try {
                 using (StreamReader file = new StreamReader(this.Path)) {
                     this.FromString(file.ReadToEnd());
@@ -170,6 +200,7 @@ namespace MattyControls
         /// <returns>Whether there was an error saving</returns>
         public bool Save() {
             bool noError = false;
+
             try {
                 using (StreamWriter file = new StreamWriter(this.Path)) {
                     file.WriteLine(this.ToString());
@@ -179,6 +210,7 @@ namespace MattyControls
             catch {
                 return false;
             }
+
             return noError;
         }
 
@@ -245,8 +277,9 @@ namespace MattyControls
         /// <returns></returns>
         public static Color Str2Color(string s, char separator = ',') {
             string[] cs = s.Split(separator);
-            if (cs.Length == 3)
+            if (cs.Length == 3) {
                 return Color.FromArgb(int.Parse(cs[0]), int.Parse(cs[1]), int.Parse(cs[2]));
+            }
             return Color.FromArgb(int.Parse(cs[0]), int.Parse(cs[1]), int.Parse(cs[2]), int.Parse(cs[3]));
         }
         #endregion
@@ -256,8 +289,8 @@ namespace MattyControls
             set { this.set("position", value); }
         }
 
-        public Point Size {
-            get { return this.get("size", new Point(200, 150)); }
+        public Size Size {
+            get { return this.get("size", Size.Empty); }
             set { this.set("size", value); }
         }
     }
