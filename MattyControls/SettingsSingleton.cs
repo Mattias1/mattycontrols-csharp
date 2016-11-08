@@ -11,7 +11,8 @@ namespace MattyControls
     public class SettingsSingleton
     {
         protected virtual string Name => "settings";
-        protected virtual string Path => Application.StartupPath + System.IO.Path.DirectorySeparatorChar + Name + ".ini";
+        protected virtual string Extension => ".ini";
+        protected virtual string Path => Application.StartupPath + System.IO.Path.DirectorySeparatorChar + Name + Extension;
 
         /// <summary>
         /// The settings instance
@@ -70,8 +71,8 @@ namespace MattyControls
         /// <summary>
         /// Load the settings from file
         /// </summary>
-        /// <returns>Whether there was an error loading</returns>
-        public bool Load() {
+        /// <returns>Whether there was no error loading</returns>
+        public virtual bool Load() {
             bool noError = false;
 
             // If the file doesnt exist, load the defaults
@@ -95,8 +96,8 @@ namespace MattyControls
         /// <summary>
         /// Save the settings to file
         /// </summary>
-        /// <returns>Whether there was an error saving</returns>
-        public bool Save() {
+        /// <returns>Whether there was no error saving</returns>
+        public virtual bool Save() {
             bool noError = false;
 
             try {
@@ -281,7 +282,6 @@ namespace MattyControls
         public static string Color2Str(Color c, char separator = ',') {
             return c.A.ToString() + separator + c.R.ToString() + separator + c.G.ToString() + separator + c.B.ToString();
         }
-
         /// <summary>
         /// Parse a string to a color
         /// </summary>
