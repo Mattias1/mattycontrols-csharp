@@ -75,13 +75,17 @@ namespace MattyControls
             ctrl.Location = new Point(x, y);
         }
 
-        public static Lbl AddLabel(Control ctrl, string text, int d, bool moveCtrl, int labelWidth) {
+        public static Lbl AddLabel(Control ctrl, string text, bool moveCtrl, int labelWidth, int d) {
             // Create a new label
             Lbl label = new Lbl(text, ctrl.Parent);
 
             // Set its width
             if (labelWidth != 0)
                 label.Size = new Size(labelWidth, label.Height);
+
+            label.AutoSize = true;
+            label.MaximumSize = new Size(label.Size.Width, 0);
+            label.TextAlign = ContentAlignment.MiddleLeft;
 
             // Give it the right position
             if (moveCtrl) {
@@ -302,10 +306,10 @@ namespace MattyControls
         /// <param name="d">The distance between the label and the control</param>
         /// <param name="moveCtrl">Whether the control should be moved or not</param>
         /// <param name="labelWidth">The width of the label. Set to 0 to keep the original width</param>
-        public void AddLabel(string text, int d = -1, bool moveCtrl = true, int labelWidth = 0) {
+        public void AddLabel(string text, bool moveCtrl = true, int labelWidth = 0, int d = -1) {
             if (this.Label != null)
                 this.Parent.Controls.Remove(this.Label);
-            this.Label = MattyControl.AddLabel(this, text, d, moveCtrl, labelWidth);
+            this.Label = MattyControl.AddLabel(this, text, moveCtrl, labelWidth, d);
         }
 
         // -- foreach name, description in [('RightOf', 'right of'), ('LeftOf', 'left of'), ('Above', 'above'), ('Below', 'below')] --
