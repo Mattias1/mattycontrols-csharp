@@ -9,7 +9,7 @@ namespace MattyControls
     {
         public static int Distance = 10;
         public static int LabelWidth = 100;
-        public enum Horizontal { Left, CopyLeft, Center, CopyRight /* Pun intended */, Right };
+        public enum Horizontal { Left, CopyLeft, Center, CopyRight /* No pun intended */, Right };
         public enum Vertical { Top, CopyTop, Middle, CopyBottom, Bottom };
 
         // The static methods that actually do the work
@@ -310,67 +310,67 @@ namespace MattyControls
 
         // -- foreach name, description in [('RightOf', 'right of'), ('LeftOf', 'left of'), ('Above', 'above'), ('Below', 'below')] --
         /// <summary>
-        /// Position the control to the {{{description}}} the other control
+        /// Position the control to the {{description}} the other control
         /// </summary>
         /// <param name="parent">The parent user control</param>
         /// <param name="d">The distance between the parent's border and the control</param>
-        public void Position{{{name}}}(Control other, int d = -1) {
-            MattyControl.Position{{{name}}}(this, other, d);
+        public void Position{{name}}(Control other, int d = -1) {
+            MattyControl.Position{{name}}(this, other, d);
         }
         // -- endforeach --
 
         // -- foreach name, description in [('TopRight', 'top right'), ('TopLeft', 'top left'), ('BottomRight', 'bottom right'), ('BottomLeft', 'bottom left')] --
         /// <summary>
-        /// Position the control in the {{{description}}}
+        /// Position the control in the {{description}}
         /// </summary>
         /// <param name="parent">The parent user control</param>
         /// <param name="d">The distance between the parent's border and the control</param>
-        public void Position{{{name}}}Inside(Control parent, int d = -1) {
-            MattyControl.Position{{{name}}}Inside(this, parent, d);
+        public void Position{{name}}Inside(Control parent, int d = -1) {
+            MattyControl.Position{{name}}Inside(this, parent, d);
         }
         // -- endforeach --
 
         // -- foreach name, description in [('Right', 'to the right'), ('Down', 'downwards'), ('Left', 'to the left'), ('Up', 'upwards')] --
         /// <summary>
-        /// Stretch the control {{{description}}}
+        /// Stretch the control {{description}}
         /// </summary>
         /// <param name="factor">The factor to stretch</param>
-        public void Stretch{{{name}}}Factor(float factor) {
-            MattyControl.Stretch{{{name}}}Factor(this, factor);
+        public void Stretch{{name}}Factor(float factor) {
+            MattyControl.Stretch{{name}}Factor(this, factor);
         }
         /// <summary>
-        /// Stretch the control {{{description}}}
+        /// Stretch the control {{description}}
         /// </summary>
         /// <param name="amount">The amount to stretch</param>
-        public void Stretch{{{name}}}Fixed(int amount) {
-            MattyControl.Stretch{{{name}}}Fixed(this, amount);
+        public void Stretch{{name}}Fixed(int amount) {
+            MattyControl.Stretch{{name}}Fixed(this, amount);
         }
         /// <summary>
-        /// Stretch the control {{{description}}}
+        /// Stretch the control {{description}}
         /// </summary>
         /// <param name="parent">The parent user control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void Stretch{{{name}}}Inside(Control parent, int d = -1) {
-            MattyControl.Stretch{{{name}}}Inside(this, parent, d);
+        public void Stretch{{name}}Inside(Control parent, int d = -1) {
+            MattyControl.Stretch{{name}}Inside(this, parent, d);
         }
         /// <summary>
-        /// Stretch the control {{{description}}}
+        /// Stretch the control {{description}}
         /// </summary>
         /// <param name="c">The other control</param>
         /// <param name="d">The distance between the label and the control</param>
-        public void Stretch{{{name}}}To(Control other, int d = -1) {
-            MattyControl.Stretch{{{name}}}To(this, other, d);
+        public void Stretch{{name}}To(Control other, int d = -1) {
+            MattyControl.Stretch{{name}}To(this, other, d);
         }
 
         // -- endforeach --
 
         // -- foreach name, description in [('Right', 'to the right'), ('Down', 'downwards'), ('Left', 'to the left'), ('Up', 'upwards')] --
         /// <summary>
-        /// Move the control {{{description}}}
+        /// Move the control {{description}}
         /// </summary>
         /// <param name="amount">The number of pixels to move</param>
-        public void Move{{{name}}}(int amount) {
-            MattyControl.Move{{{name}}}(this, amount);
+        public void Move{{name}}(int amount) {
+            MattyControl.Move{{name}}(this, amount);
         }
         // -- endforeach --
         // -- end control copy --

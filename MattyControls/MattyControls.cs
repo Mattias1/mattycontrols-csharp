@@ -12,7 +12,7 @@ namespace MattyControls
     {
         public static int Distance = 10;
         public static int LabelWidth = 100;
-        public enum Horizontal { Left, CopyLeft, Center, CopyRight /* Pun intended */, Right };
+        public enum Horizontal { Left, CopyLeft, Center, CopyRight /* No pun intended */, Right };
         public enum Vertical { Top, CopyTop, Middle, CopyBottom, Bottom };
 
         // The static methods that actually do the work

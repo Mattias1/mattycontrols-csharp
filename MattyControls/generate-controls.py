@@ -153,7 +153,7 @@ class LoopPreCompiler:
             replacements = self._arrify(things)
             for line in self.lines:
                 for name, content in zip(self.loopVariables, replacements):
-                    line = line.replace('{{{' + name + '}}}', content)
+                    line = line.replace('{{' + name + '}}', content)
 
                 result.append(line)
 
