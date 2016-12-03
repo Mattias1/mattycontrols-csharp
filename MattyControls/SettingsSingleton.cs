@@ -120,11 +120,17 @@ namespace MattyControls
             this.hashList = new Dictionary<string, string>();
         }
 
+        /// <summary>
+        /// The top-left position of the window on the screen
+        /// </summary>
         public Point Position {
             get { return this.get("position", Point.Empty); }
             set { this.set("position", value); }
         }
 
+        /// <summary>
+        /// The clientsize of the form
+        /// </summary>
         public Size Size {
             get { return this.get("size", Size.Empty); }
             set { this.set("size", value); }
@@ -233,6 +239,17 @@ namespace MattyControls
         }
         protected void set(string key, IEnumerable<int> value, string separator = ",") {
             this.set(key, string.Join<int>(separator, value));
+        }
+
+        // Enum
+        protected T getEnum<T>(string key, T defaultValue) where T : struct {
+            T result;
+            if (Enum.TryParse(this.get(key, defaultValue.ToString()), out result))
+                return result;
+            return defaultValue;
+        }
+        protected void setEnum<T>(string key, T value) where T : struct {
+            this.set(key, value.ToString());
         }
 
         /// <summary>
