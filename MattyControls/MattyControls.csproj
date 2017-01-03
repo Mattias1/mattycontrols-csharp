@@ -48,6 +48,9 @@
     <Compile Include="MattyForms.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Include="MattyStatusStrip.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="MattyUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

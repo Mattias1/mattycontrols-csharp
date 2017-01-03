@@ -12,6 +12,18 @@ namespace MattyControls
         private MattyUserControl lastVisited; // Not the active one
         private SettingsSingleton settings;   // I can't use the static getter inside this class, because the singleton can be subclassed.
 
+        public List<MattyStatusStrip> StatusStrips { get; private set; }
+        public MattyStatusStrip StatusStrip {
+            get {
+                if (this.StatusStrips.Count < 1)
+                    throw new ArgumentOutOfRangeException("No status strips found, call this.UseStatusStrip() to create one.");
+                else if (this.StatusStrips.Count > 1)
+                    throw new ArgumentException("There are multiple statusstrips, use this.StatusStrips instead.");
+                return this.StatusStrips.First();
+            }
+        }
+
+
         public MattyForm(Size minimumSize, SettingsSingleton settings)
             : this(minimumSize, minimumSize, settings) { }
 
@@ -24,6 +36,7 @@ namespace MattyControls
             this.userControls = new List<MattyUserControl>();
             this.lastVisited = null;
             this.settings = settings;
+            this.StatusStrips = new List<MattyStatusStrip>();
 
             this.StartPosition = FormStartPosition.Manual;
             this.Location = this.settings.Position;
@@ -38,13 +51,21 @@ namespace MattyControls
             // Save the size to the settings
             this.settings.Size = this.ClientSize;
 
+            this.OnResize();
+
             // Resize the user controls
             foreach (MattyUserControl u in this.userControls) {
-                u.Size = this.ClientSize;
-                u.OnResize();
+                this.resizeUsercontrol(u);
             }
         }
 
+        /// <summary>
+        /// This method gets called when the form is resized
+        /// </summary>
+        public virtual void OnResize() { }
+
+
+        // User coontrols
         /// <summary>
         /// Add a whole bunch of usercontrols to the form
         /// </summary>
@@ -67,10 +88,9 @@ namespace MattyControls
         /// <param name="usercontrol"></param>
         public void AddUserControl(MattyUserControl usercontrol) {
             this.userControls.Add(usercontrol);
-            usercontrol.Size = this.ClientSize;
             usercontrol.Hide();
             this.Controls.Add(usercontrol);
-            usercontrol.OnResize();
+            this.resizeUsercontrol(usercontrol);
         }
 
         /// <summary>
@@ -102,8 +122,7 @@ namespace MattyControls
             usercontrol.OnVisibilityChanged();
             usercontrol.OnShow();
 
-            usercontrol.Size = this.ClientSize;
-            usercontrol.OnResize();
+            this.resizeUsercontrol(usercontrol);
         }
         /// <summary>
         /// Show the last visited usercontrol (and hide all others)
@@ -112,6 +131,29 @@ namespace MattyControls
             if (this.lastVisited != null) {
                 this.ShowUserControl(this.lastVisited);
             }
+        }
+
+        private void resizeUsercontrol(MattyUserControl usercontrol) {
+            usercontrol.Size = new Size(this.ClientSize.Width, this.ClientSize.Height - this.StatusStrips.Sum(s => s.Height));
+            usercontrol.OnResize();
+        }
+
+
+        // Status strip
+        /// <summary>
+        /// Add a status strip to the form
+        /// </summary>
+        /// <param name="name"></param>
+        public MattyStatusStrip UseStatusStrip(string name = null) {
+            var statusStrip = new MattyStatusStrip();
+            statusStrip.Name = name;
+
+            this.StatusStrips.Add(statusStrip);
+            this.Controls.Add(statusStrip);
+
+            this.onResizeEnd(this, new EventArgs());
+
+            return statusStrip;
         }
     }
 }
