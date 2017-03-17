@@ -151,7 +151,12 @@ namespace MattyControls
 
         // Bool
         protected bool get(string key, bool defaultValue) {
-            return bool.Parse(this.get(key, defaultValue.ToString()));
+            try {
+                return bool.Parse(this.get(key, defaultValue.ToString()));
+            }
+            catch {
+                return defaultValue;
+            }
         }
         protected void set(string key, bool value) {
             this.set(key, value.ToString());
@@ -159,7 +164,12 @@ namespace MattyControls
 
         // Int
         protected int get(string key, int defaultValue) {
-            return int.Parse(this.get(key, defaultValue.ToString()));
+            try {
+                return int.Parse(this.get(key, defaultValue.ToString()));
+            }
+            catch {
+                return defaultValue;
+            }
         }
         protected void set(string key, int value) {
             this.set(key, value.ToString());
@@ -167,7 +177,12 @@ namespace MattyControls
 
         // Long
         protected long get(string key, long defaultValue) {
-            return long.Parse(this.get(key, defaultValue.ToString()));
+            try {
+                return long.Parse(this.get(key, defaultValue.ToString()));
+            }
+            catch {
+                return defaultValue;
+            }
         }
         protected void set(string key, long value) {
             this.set(key, value.ToString());
@@ -175,7 +190,12 @@ namespace MattyControls
 
         // Float
         protected float get(string key, float defaultValue) {
-            return float.Parse(this.get(key, defaultValue.ToString()));
+            try {
+                return float.Parse(this.get(key, defaultValue.ToString()));
+            }
+            catch {
+                return defaultValue;
+            }
         }
         protected void set(string key, float value) {
             this.set(key, value.ToString());
@@ -183,7 +203,12 @@ namespace MattyControls
 
         // Double
         protected double get(string key, double defaultValue) {
-            return double.Parse(this.get(key, defaultValue.ToString()));
+            try {
+                return double.Parse(this.get(key, defaultValue.ToString()));
+            }
+            catch {
+                return defaultValue;
+            }
         }
         protected void set(string key, double value) {
             this.set(key, value.ToString());
@@ -191,7 +216,12 @@ namespace MattyControls
 
         // Point
         protected Point get(string key, Point defaultValue) {
-            return Str2Vec(this.get(key, Vec2Str(defaultValue)));
+            try {
+                return Str2Vec(this.get(key, Vec2Str(defaultValue)));
+            }
+            catch {
+                return defaultValue;
+            }
         }
         protected void set(string key, Point value) {
             this.set(key, Vec2Str(value));
@@ -199,7 +229,12 @@ namespace MattyControls
 
         // Size
         protected Size get(string key, Size defaultValue) {
-            return new Size(this.get(key, new Point(defaultValue)));
+            try {
+                return new Size(this.get(key, new Point(defaultValue)));
+            }
+            catch {
+                return defaultValue;
+            }
         }
         protected void set(string key, Size value) {
             this.set(key, new Point(value));
@@ -207,7 +242,12 @@ namespace MattyControls
 
         // Color
         protected Color get(string key, Color defaultValue) {
-            return Str2Color(this.get(key, Color2Str(defaultValue)));
+            try {
+                return Str2Color(this.get(key, Color2Str(defaultValue)));
+            }
+            catch {
+                return defaultValue;
+            }
         }
         protected void set(string key, Color value) {
             this.set(key, Color2Str(value));
@@ -215,13 +255,18 @@ namespace MattyControls
 
         // String[], List<string>, IEnumerable<string>, ...
         protected string[] get(string key, string[] defaultValue, string separator = ",") {
-            return this.get(key, defaultValue).ToArray();
+            return this.get(key, (IEnumerable<string>)defaultValue, separator).ToArray();
         }
         protected List<string> get(string key, List<string> defaultValue, string separator = ",") {
-            return this.get(key, defaultValue).ToList();
+            return this.get(key, (IEnumerable<string>)defaultValue, separator).ToList();
         }
         protected IEnumerable<string> get(string key, IEnumerable<string> defaultValue, string separator = ",") {
-            return this.get(key, string.Join(separator, defaultValue)).Split(new string[] { separator }, StringSplitOptions.RemoveEmptyEntries);
+            try {
+                return this.get(key, string.Join(separator, defaultValue)).Split(new string[] { separator }, StringSplitOptions.RemoveEmptyEntries);
+            }
+            catch {
+                return defaultValue;
+            }
         }
         protected void set(string key, IEnumerable<string> value, string separator = ",") {
             this.set(key, string.Join(separator, value));
@@ -229,13 +274,18 @@ namespace MattyControls
 
         // Int[], List<int>, IEnumerable<int>, ...
         protected int[] get(string key, int[] defaultValue, string separator = ",") {
-            return this.get(key, defaultValue, separator).ToArray();
+            return this.get(key, (IEnumerable<int>)defaultValue, separator).ToArray();
         }
         protected List<int> get(string key, List<int> defaultValue, string separator = ",") {
-            return this.get(key, defaultValue, separator).ToList();
+            return this.get(key, (IEnumerable<int>)defaultValue, separator).ToList();
         }
         protected IEnumerable<int> get(string key, IEnumerable<int> defaultValue, string separator = ",") {
-            return this.get(key, defaultValue.Select(i => i.ToString())).Select(int.Parse).ToArray();
+            try {
+                return this.get(key, defaultValue.Select(i => i.ToString())).Select(int.Parse);
+            }
+            catch {
+                return defaultValue;
+            }
         }
         protected void set(string key, IEnumerable<int> value, string separator = ",") {
             this.set(key, string.Join<int>(separator, value));
