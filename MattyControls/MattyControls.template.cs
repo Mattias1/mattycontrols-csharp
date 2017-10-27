@@ -250,6 +250,11 @@ namespace MattyControls
             this.Text = text;
             parent.Controls.Add(this);
         }
+        public Btn(string text, Control parent, EventHandler onButtonClick) {
+            this.Text = text;
+            this.Click += onButtonClick;
+            parent.Controls.Add(this);
+        }
         // -- Cb : CheckBox
         public Cb(string text, Control parent) {
             this.Text = text;
@@ -375,7 +380,6 @@ namespace MattyControls
         }
 
         // -- endforeach --
-
         // -- foreach name, description in [('Right', 'to the right'), ('Down', 'downwards'), ('Left', 'to the left'), ('Up', 'upwards')] --
         /// <summary>
         /// Move the control {{description}}

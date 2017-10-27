@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IMattyControl.cs" />
+    <Compile Include="ControlHelpers.cs" />
     <Compile Include="MattyControls.cs">
       <SubType>Component</SubType>
     </Compile>

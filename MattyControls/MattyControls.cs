@@ -250,10 +250,15 @@ namespace MattyControls
 
     }
 
-    public class Btn : Button
+    public class Btn : Button, IMattyControl
     {
         public Btn(string text, Control parent) {
             this.Text = text;
+            parent.Controls.Add(this);
+        }
+        public Btn(string text, Control parent, EventHandler onButtonClick) {
+            this.Text = text;
+            this.Click += onButtonClick;
             parent.Controls.Add(this);
         }
 
@@ -487,7 +492,6 @@ namespace MattyControls
             MattyControl.StretchUpTo(this, other, d);
         }
 
-
         /// <summary>
         /// Move the control to the right
         /// </summary>
@@ -519,7 +523,7 @@ namespace MattyControls
 
     }
 
-    public class Cb : CheckBox
+    public class Cb : CheckBox, IMattyControl
     {
         public Cb(string text, Control parent) {
             this.Text = text;
@@ -756,7 +760,6 @@ namespace MattyControls
             MattyControl.StretchUpTo(this, other, d);
         }
 
-
         /// <summary>
         /// Move the control to the right
         /// </summary>
@@ -788,7 +791,7 @@ namespace MattyControls
 
     }
 
-    public class Tb : TextBox
+    public class Tb : TextBox, IMattyControl
     {
         public Tb(Control parent) {
             parent.Controls.Add(this);
@@ -1024,7 +1027,6 @@ namespace MattyControls
             MattyControl.StretchUpTo(this, other, d);
         }
 
-
         /// <summary>
         /// Move the control to the right
         /// </summary>
@@ -1056,7 +1058,7 @@ namespace MattyControls
 
     }
 
-    public class RichTb : RichTextBox
+    public class RichTb : RichTextBox, IMattyControl
     {
         public RichTb(Control parent) {
             parent.Controls.Add(this);
@@ -1292,7 +1294,6 @@ namespace MattyControls
             MattyControl.StretchUpTo(this, other, d);
         }
 
-
         /// <summary>
         /// Move the control to the right
         /// </summary>
@@ -1324,7 +1325,7 @@ namespace MattyControls
 
     }
 
-    public class Lb : ListBox
+    public class Lb : ListBox, IMattyControl
     {
         public Lb(Control parent) {
             parent.Controls.Add(this);
@@ -1560,7 +1561,6 @@ namespace MattyControls
             MattyControl.StretchUpTo(this, other, d);
         }
 
-
         /// <summary>
         /// Move the control to the right
         /// </summary>
@@ -1592,7 +1592,7 @@ namespace MattyControls
 
     }
 
-    public class Db : ComboBox
+    public class Db : ComboBox, IMattyControl
     {
         public Db(Control parent) {
             parent.Controls.Add(this);
@@ -1829,7 +1829,6 @@ namespace MattyControls
             MattyControl.StretchUpTo(this, other, d);
         }
 
-
         /// <summary>
         /// Move the control to the right
         /// </summary>
@@ -1861,7 +1860,7 @@ namespace MattyControls
 
     }
 
-    public class Lbl : Label
+    public class Lbl : Label, IMattyControl
     {
         public Lbl(string text, Control parent) {
             this.Text = text;
@@ -2097,7 +2096,6 @@ namespace MattyControls
         public void StretchUpTo(Control other, int d = -1) {
             MattyControl.StretchUpTo(this, other, d);
         }
-
 
         /// <summary>
         /// Move the control to the right
