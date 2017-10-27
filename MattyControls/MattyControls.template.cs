@@ -13,7 +13,7 @@ namespace MattyControls
         public enum Vertical { Top, CopyTop, Middle, CopyBottom, Bottom };
 
         // The static methods that actually do the work
-        public static void LocateInside(Control ctrl, Control parentCtrl, MattyControl.Horizontal h, MattyControl.Vertical v, int d) {
+        public static void LocateInside(Control ctrl, Control parentCtrl, MattyControl.Horizontal h, MattyControl.Vertical v, int d = -1) {
             if (d == -1)
                 d = MattyControl.Distance;
             int x = 0;
@@ -44,7 +44,7 @@ namespace MattyControls
             ctrl.Location = new Point(x, y);
         }
 
-        public static void LocateFrom(Control ctrl, Control other, MattyControl.Horizontal h, MattyControl.Vertical v, int d) {
+        public static void LocateFrom(Control ctrl, Control other, MattyControl.Horizontal h, MattyControl.Vertical v, int d = -1) {
             if (d == -1)
                 d = MattyControl.Distance;
             int x = 0;
@@ -75,7 +75,7 @@ namespace MattyControls
             ctrl.Location = new Point(x, y);
         }
 
-        public static Lbl AddLabel(Control ctrl, string text, bool moveCtrl, int labelWidth, int d) {
+        public static Lbl AddLabel(Control ctrl, string text, bool moveCtrl, int labelWidth, int d = -1) {
             // Create a new label
             Lbl label = new Lbl(text, ctrl.Parent);
 
@@ -101,44 +101,44 @@ namespace MattyControls
         }
 
         // Quick positioning relative to other controls
-        public static void PositionRightOf(Control ctrl, Control other, int d) {
+        public static void PositionRightOf(Control ctrl, Control other, int d = -1) {
             if (d == -1)
                 d = MattyControl.Distance;
             LocateFrom(ctrl, other, MattyControl.Horizontal.Right, MattyControl.Vertical.CopyTop, d);
         }
-        public static void PositionLeftOf(Control ctrl, Control other, int d) {
+        public static void PositionLeftOf(Control ctrl, Control other, int d = -1) {
             if (d == -1)
                 d = MattyControl.Distance;
             LocateFrom(ctrl, other, MattyControl.Horizontal.Left, MattyControl.Vertical.CopyTop, d);
         }
-        public static void PositionBelow(Control ctrl, Control other, int d) {
+        public static void PositionBelow(Control ctrl, Control other, int d = -1) {
             if (d == -1)
                 d = MattyControl.Distance;
             LocateFrom(ctrl, other, MattyControl.Horizontal.CopyLeft, MattyControl.Vertical.Bottom, d);
         }
-        public static void PositionAbove(Control ctrl, Control other, int d) {
+        public static void PositionAbove(Control ctrl, Control other, int d = -1) {
             if (d == -1)
                 d = MattyControl.Distance;
             LocateFrom(ctrl, other, MattyControl.Horizontal.CopyLeft, MattyControl.Vertical.Top, d);
         }
 
         // Quick positioning inside the parent
-        public static void PositionTopLeftInside(Control ctrl, Control parent, int d) {
+        public static void PositionTopLeftInside(Control ctrl, Control parent, int d = -1) {
             if (d == -1)
                 d = MattyControl.Distance;
             LocateInside(ctrl, parent, MattyControl.Horizontal.Left, MattyControl.Vertical.Top, d);
         }
-        public static void PositionTopRightInside(Control ctrl, Control parent, int d) {
+        public static void PositionTopRightInside(Control ctrl, Control parent, int d = -1) {
             if (d == -1)
                 d = MattyControl.Distance;
             LocateInside(ctrl, parent, MattyControl.Horizontal.Right, MattyControl.Vertical.Top, d);
         }
-        public static void PositionBottomLeftInside(Control ctrl, Control parent, int d) {
+        public static void PositionBottomLeftInside(Control ctrl, Control parent, int d = -1) {
             if (d == -1)
                 d = MattyControl.Distance;
             LocateInside(ctrl, parent, MattyControl.Horizontal.Left, MattyControl.Vertical.Bottom, d);
         }
-        public static void PositionBottomRightInside(Control ctrl, Control parent, int d) {
+        public static void PositionBottomRightInside(Control ctrl, Control parent, int d = -1) {
             if (d == -1)
                 d = MattyControl.Distance;
             LocateInside(ctrl, parent, MattyControl.Horizontal.Right, MattyControl.Vertical.Bottom, d);
@@ -151,12 +151,12 @@ namespace MattyControls
         public static void StretchRightFixed(Control ctrl, int amount) {
             ctrl.Size = new Size(ctrl.Size.Width + amount, ctrl.Height);
         }
-        public static void StretchRightInside(Control ctrl, Control parent, int d) {
+        public static void StretchRightInside(Control ctrl, Control parent, int d = -1) {
             if (d == -1)
                 d = MattyControl.Distance;
             ctrl.Size = new Size(parent.ClientSize.Width - ctrl.Location.X - d, ctrl.Size.Height);
         }
-        public static void StretchRightTo(Control ctrl, Control other, int d) {
+        public static void StretchRightTo(Control ctrl, Control other, int d = -1) {
             if (d == -1)
                 d = MattyControl.Distance;
             ctrl.Size = new Size(other.Location.X - ctrl.Location.X - d, ctrl.Size.Height);
@@ -169,12 +169,12 @@ namespace MattyControls
         public static void StretchDownFixed(Control ctrl, int amount) {
             ctrl.Size = new Size(ctrl.Size.Width, ctrl.Size.Height + amount);
         }
-        public static void StretchDownInside(Control ctrl, Control parent, int d) {
+        public static void StretchDownInside(Control ctrl, Control parent, int d = -1) {
             if (d == -1)
                 d = MattyControl.Distance;
             ctrl.Size = new Size(ctrl.Size.Width, parent.ClientSize.Height - ctrl.Location.Y - d);
         }
-        public static void StretchDownTo(Control ctrl, Control other, int d) {
+        public static void StretchDownTo(Control ctrl, Control other, int d = -1) {
             if (d == -1)
                 d = MattyControl.Distance;
             ctrl.Size = new Size(ctrl.Size.Width, other.Location.Y - ctrl.Location.Y - d);
@@ -190,14 +190,18 @@ namespace MattyControls
             StretchRightFixed(ctrl, amount);
             MoveLeft(ctrl, amount);
         }
-        public static void StretchLeftInside(Control ctrl, Control parent, int d) {
+        public static void StretchLeftInside(Control ctrl, Control parent, int d = -1) {
+            if (d == -1)
+                d = MattyControl.Distance;
             int oldWidth = ctrl.Size.Width;
-            StretchRightInside(ctrl, parent, d);
+            ctrl.Size = new Size(ctrl.Location.X + ctrl.Size.Width - d, ctrl.Size.Height);
             MoveLeft(ctrl, ctrl.Size.Width - oldWidth);
         }
-        public static void StretchLeftTo(Control ctrl, Control other, int d) {
+        public static void StretchLeftTo(Control ctrl, Control other, int d = -1) {
+            if (d == -1)
+                d = MattyControl.Distance;
             int oldWidth = ctrl.Size.Width;
-            StretchRightTo(ctrl, other, d);
+            ctrl.Size = new Size(ctrl.Location.X + ctrl.Size.Width - other.Location.X - other.Size.Width - d, ctrl.Size.Height);
             MoveLeft(ctrl, ctrl.Size.Width - oldWidth);
         }
 
@@ -211,14 +215,18 @@ namespace MattyControls
             StretchDownFixed(ctrl, amount);
             MoveUp(ctrl, amount);
         }
-        public static void StretchUpInside(Control ctrl, Control parent, int d) {
+        public static void StretchUpInside(Control ctrl, Control parent, int d = -1) {
+            if (d == -1)
+                d = MattyControl.Distance;
             int oldHeight = ctrl.Size.Height;
-            StretchDownInside(ctrl, parent, d);
+            ctrl.Size = new Size(ctrl.Size.Width, ctrl.Location.Y + ctrl.Size.Height - d);
             MoveUp(ctrl, ctrl.Size.Height - oldHeight);
         }
-        public static void StretchUpTo(Control ctrl, Control other, int d) {
+        public static void StretchUpTo(Control ctrl, Control other, int d = -1) {
+            if (d == -1)
+                d = MattyControl.Distance;
             int oldHeight = ctrl.Size.Height;
-            StretchDownTo(ctrl, other, d);
+            ctrl.Size = new Size(ctrl.Size.Width, ctrl.Location.Y + ctrl.Size.Height - other.Location.Y - other.Size.Height - d);
             MoveUp(ctrl, ctrl.Size.Height - oldHeight);
         }
 
