@@ -1,4 +1,7 @@
-# mattycontrols-csharp
+# MattyControls (for C#)
+**DEPRECATION NOTICE - This project is obsolete in favour of
+[Mattias1/avalonia-extensions](https://github.com/Mattias1/avalonia-extensions).**
+
 A wrapper around some windows forms controls.
 
 This library enables me to simply create windows forms applications without using a designer.
